@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Patient.css';
+import './Schedule.css';
 import { Avatar, List } from 'antd';
 import VirtualList from 'rc-virtual-list';
 
@@ -23,7 +23,7 @@ const fakeDataUrl =
   'https://randomuser.me/api/?results=20&inc=name,gender,email,nat,picture&noinfo';
 const ContainerHeight = 500;
 
-const Agenda: React.FC = () => {
+const Schedule: React.FC = () => {
   const [data, setData] = useState<UserItem[]>([]);
 
   const appendData = () => {
@@ -72,4 +72,4 @@ const Agenda: React.FC = () => {
   );
 };
 
-export default Agenda;
+export default Schedule;

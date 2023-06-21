@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Dashboard.css'
-import Agenda from '../../Forms/PatientForm/Agenda';
+import Schedule from '../../Forms/ScheduleForm/Schedule';
 import Patients from '../../Forms/PatientForm/Patients'
 import { CalendarOutlined, DollarOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined, UserOutlined, } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Avatar, Typography } from 'antd';
@@ -27,7 +27,7 @@ export const Dashboard: React.FC = () => {
     if (activePage === 'patientList') {
       return <Patients/>;
     } else if (activePage === 'patientSchedule') {
-      return <Agenda/>;
+      return <Schedule/>;
     }
 
     // Adicione mais condições para outras páginas do menu, se necessário

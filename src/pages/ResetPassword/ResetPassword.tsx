@@ -1,11 +1,11 @@
-import { Typography, Button, Checkbox, Col, Form, Input, Row, message } from "antd";
+import { Typography, Button, Col, Form, Input, Row, message } from "antd";
 import { useAuth } from "../../context/AuthProvider/useAuth";
 import { useHistory } from "react-router-dom";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import './login.css'
+import { UserOutlined } from "@ant-design/icons";
+import './ResetPassword.css'
 
 
-export const Login = () => {
+export const ResetPassword = () => {
     const auth = useAuth();
     const history = useHistory();
     const { Text } = Typography;
@@ -28,87 +28,68 @@ export const Login = () => {
 
     const validateEmail = (_: any, value: string) => {
         if (!value) {
-          return Promise.reject('Por favor, insira seu email!');
+            return Promise.reject('Por favor, insira seu email!');
         }
-    
+
         if (!emailRegex.test(value)) {
-          return Promise.reject('Por favor, insira um email válido!');
+            return Promise.reject('Por favor, insira um email válido!');
         }
-    
+
         return Promise.resolve();
-      };
+    };
 
 
     return (
         <div style={{ backgroundColor: "#f0f0f0", height: "100vh" }}>
 
             <Row justify="center" align="middle" style={{ height: "100%" }}>
-                <Col span={4}>
-                <div className="form-container2">
-                    <div style={{ marginTop: "20px", marginBottom: "60px", textAlign: "center" }}>
-                        <Text style={{ color: 'black', fontSize: '19px' }}
-                        >
-                            Faça login em sua conta
-                        </Text>
-                    </div>
-                    <Form
-                        name="normal_login"
-                        className="login-form"
-                        initialValues={{
-                            remember: true,
-                        }}
-                        onFinish={onFinish}
-                    >
+                <Col span={5}>
+                    <div className="form-container2">
+                        <div style={{ marginTop: "20px", marginBottom: "20px", textAlign: "center" }}>
+                            <Text style={{ color: 'black', fontSize: '22px' }}
+                            >
+                                Recuperação de Senha
+                            </Text>
+                        </div>
+                        <div style={{ marginTop: "10px", marginBottom: "20px", textAlign: "center" }}>
+                            <Text style={{ color: 'black', fontSize: '15px' }}
+                            >
+                                Para recuperar sua senha, informe seu enredeço de email cadastrado em nosso sistema,
+                                enviaremos um link para a alteração da senha.
+                            </Text>
+                        </div>
+                        <div style={{ marginTop: "10px", marginBottom: "20px", textAlign: "center" }}>
 
-                        <Form.Item
+                            <Form
+                                name="normal_login"
+                                initialValues={{
+                                    remember: true,
+                                }}
+                                onFinish={onFinish}
+                            >
 
+                                <Form.Item
 
-                            name="email"
-                            rules={[
-                                {
-                                    validator: validateEmail,
-                                },
-                            ]}
-                        >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
-                        </Form.Item>
-                        <Form.Item
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Por favor, insira sua senha!",
-                                },
-                            ]}
-                        >
-                            <Input.Password
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="Password"
+                                    name="email"
+                                    rules={[
+                                        {
+                                            validator: validateEmail,
+                                        },
+                                    ]}
+                                >
+                                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+                                </Form.Item>
 
-                            />
-
-                        </Form.Item>
-                        <Form.Item>
-                            <Form.Item name="remember" valuePropName="" noStyle>
-                                <Checkbox>Lembrar-me</Checkbox>
-                            </Form.Item>
-
-                            <a className="login-form-forgot" href="">
-                                Esqueci minha senha
-                            </a>
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" >
-                                Entrar
-                            </Button>
-                            Ou <a href="">Registre-se agora!</a>
-                        </Form.Item>
-                    </Form>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" >
+                                        Enviar
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                        </div>
                     </div>
                 </Col>
-                
+
             </Row>
         </div>
     );
