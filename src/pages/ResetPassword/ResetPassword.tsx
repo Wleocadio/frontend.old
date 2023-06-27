@@ -1,11 +1,11 @@
-import { Typography, Button, Checkbox, Col, Form, Input, Row, message } from "antd";
+import { Typography, Button, Col, Form, Input, Row, message } from "antd";
 import { useAuth } from "../../context/AuthProvider/useAuth";
 import { useHistory } from "react-router-dom";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import './login.css'
+import { UserOutlined } from "@ant-design/icons";
+import './ResetPassword.css'
 
 
-export const Login = () => {
+export const ResetPassword = () => {
     const auth = useAuth();
     const history = useHistory();
     const { Text } = Typography;
@@ -16,10 +16,10 @@ export const Login = () => {
         //console.log(values.email, values.password + ' onFinish')
         try {
 
-            await auth.authenticate(values.email, values.password)
+           // await auth.authenticate(values.email, values.password)
 
-            history.push('/Dashboard');
-            window.location.reload();
+           // history.push('/Dashboard');
+            //window.location.reload();
         } catch (error) {
 
             message.error("Credenciais de login inválidas. Por favor, verifique seu email e senha.")
@@ -28,87 +28,85 @@ export const Login = () => {
 
     const validateEmail = (_: any, value: string) => {
         if (!value) {
-          return Promise.reject('Por favor, insira seu email!');
+            return Promise.reject('Por favor, insira seu email!');
         }
-    
+
         if (!emailRegex.test(value)) {
-          return Promise.reject('Por favor, insira um email válido!');
+            return Promise.reject('Por favor, insira um email válido!');
         }
-    
+
         return Promise.resolve();
-      };
+    };
+    function Login() {
+        try {
+            history.push('/login');
+            window.location.reload();
+        } catch (error) {
+            message.error("Erro ao carregar a Página de login. Por favor, tente mais tarde.")
+        }
+        
+      }
 
 
     return (
         <div style={{ backgroundColor: "#f0f0f0", height: "100vh" }}>
 
             <Row justify="center" align="middle" style={{ height: "100%" }}>
-                <Col span={4}>
-                <div className="form-container2">
-                    <div style={{ marginTop: "20px", marginBottom: "60px", textAlign: "center" }}>
-                        <Text style={{ color: 'black', fontSize: '19px' }}
-                        >
-                            Faça login em sua conta
-                        </Text>
-                    </div>
-                    <Form
-                        name="normal_login"
-                        className="login-form"
-                        initialValues={{
-                            remember: true,
-                        }}
-                        onFinish={onFinish}
-                    >
+                <Col span={5}>
+                    <div className="form-reset">
+                        <div style={{ marginTop: "20px", marginBottom: "20px", textAlign: "center" }}>
+                            <Text style={{ color: 'black', fontSize: '22px' }}
+                            >
+                                Esqueceu sua senha?
+                            </Text>
+                        </div>
+                        <div style={{ marginTop: "10px", marginBottom: "25px", textAlign: "center" }}>
+                            <Text style={{ color: 'black', fontSize: '13px' }}
+                            >
+                                Enviaremos um link para a alteração da senha.
+                            </Text>
+                        </div>
+                        <div style={{ marginTop: "10px", marginBottom: "10px", textAlign: "center" }}>
 
-                        <Form.Item
+                            <Form
+                                name="normal_login"
+                                initialValues={{
+                                    remember: true,
+                                }}
+                                onFinish={onFinish}
+                            >
 
+                                <Form.Item
 
-                            name="email"
-                            rules={[
-                                {
-                                    validator: validateEmail,
-                                },
-                            ]}
-                        >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
-                        </Form.Item>
-                        <Form.Item
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Por favor, insira sua senha!",
-                                },
-                            ]}
-                        >
-                            <Input.Password
-                                prefix={<LockOutlined className="site-form-item-icon" />}
-                                type="password"
-                                placeholder="Password"
+                                    name="email"
+                                    rules={[
+                                        {
+                                            validator: validateEmail,
+                                        },
+                                    ]}
+                                >
+                                    <Input id="inputEmail" prefix={<UserOutlined/>} placeholder="Email" style={{ width: '250px' }}/>
+                                </Form.Item>
 
-                            />
-
-                        </Form.Item>
-                        <Form.Item>
-                            <Form.Item name="remember" valuePropName="" noStyle>
-                                <Checkbox>Lembrar-me</Checkbox>
-                            </Form.Item>
-
-                            <a className="login-form-forgot" href="">
-                                Esqueci minha senha
-                            </a>
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" >
-                                Entrar
-                            </Button>
-                            Ou <a href="">Registre-se agora!</a>
-                        </Form.Item>
-                    </Form>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" style={{ width: '250px', marginTop: "1px"}} >
+                                    <Text style={{ color: 'white', fontSize: '12px' }}
+                                        >
+                                        Enviar email para recuperar senha
+                                        </Text>
+                                    </Button>
+                                    <div style={{ marginTop: "13px", marginBottom: "20px", textAlign: "center" }}>
+                                        <Text style={{ color: 'gray', fontSize: '12px' }}
+                                        >
+                                            Já tem uma conta? <a onClick={Login}>Entrar</a>
+                                        </Text>
+                                    </div>
+                                </Form.Item>
+                            </Form>
+                        </div>
                     </div>
                 </Col>
-                
+
             </Row>
         </div>
     );

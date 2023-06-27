@@ -143,11 +143,27 @@
 }
 
 div.ant-modal {
-  margin-top: -50px;
   width: 750px !important;
   height: 500px !important;
 }
 .custom-tabs .ant-tabs-nav {
   display: flex;
   justify-content: center;
+}
+
+.div.ant-picker-date-panel{
+  width: 750px ;
+  height: 500px ;
+
+}
+
+.ant-picker-date-panel {
+  height: 500px;
+  overflow-y: auto;
+}
+
+.ant-picker-cell {
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
 }

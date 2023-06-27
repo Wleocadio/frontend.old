@@ -56,7 +56,6 @@ const Patients: React.FC = () => {
   const auth = useAuth();
   useEffect(() => {
     const fetchaData = async () => {
-      console.log('teste')
       try {
 
         const token = auth.token || '';
@@ -94,7 +93,7 @@ const Patients: React.FC = () => {
 
 
   return (
-    <div >
+    <div>
       <List>
         <VirtualList
           height={ContainerHeight}
@@ -115,7 +114,6 @@ const Patients: React.FC = () => {
           )}
         </VirtualList>
       </List>
-
       <Modal
         visible={modalVisible}
         onCancel={closeModal}
@@ -128,11 +126,7 @@ const Patients: React.FC = () => {
           </Button>,
 
         ]}
-        style={{
-          width: '700px',
-          transformOrigin: '-234px 34px',
-
-        }}
+        
         maskClosable={false}
 
       >
@@ -283,6 +277,7 @@ const Patients: React.FC = () => {
           </>
         )}
       </Modal>
+    
 
 
     </div >

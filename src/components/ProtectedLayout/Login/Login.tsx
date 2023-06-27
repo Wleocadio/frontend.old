@@ -1,13 +1,9 @@
 import { Typography, Button, Checkbox, Col, Form, Input, Row, message } from "antd";
 import { useAuth } from "../../../context/AuthProvider/useAuth";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import './login.css'
 import { useState } from "react";
-
-
-
-
 
 export const Login = () => {
     const auth = useAuth();
@@ -53,14 +49,24 @@ export const Login = () => {
         return Promise.resolve();
       };
 
+      function resetPassword() {
+        try {
+            history.push('/ResetPassword');
+            window.location.reload();
+        } catch (error) {
+            message.error("Erro ao carregar a Página. Por favor, tente mais tarde.")
+        }
+        
+      }
+
 
     return (
         <div style={{ backgroundColor: "#f0f0f0", height: "100vh" }}>
 
             <Row justify="center" align="middle" style={{ height: "100%" }}>
                 <Col span={4}>
-                <div className="form-container2">
-                    <div style={{ marginTop: "20px", marginBottom: "60px", textAlign: "center" }}>
+                <div className="form-container-login">
+                    <div style={{ marginTop: "15px", marginBottom: "40px", textAlign: "center" }}>
                         <Text style={{ color: 'black', fontSize: '19px' }}
                         >
                             Faça login em sua conta
@@ -87,7 +93,7 @@ export const Login = () => {
                                 },
                             ]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+                            <Input id="imputEmail" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -99,6 +105,7 @@ export const Login = () => {
                             ]}
                         >
                             <Input.Password
+                            id="inputPassword"
                                 prefix={<LockOutlined className="site-form-item-icon" />}
                                 type="password"
                                 placeholder="Password"
@@ -108,19 +115,19 @@ export const Login = () => {
                         </Form.Item>
                         <Form.Item>
                             <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>Lembrar-me</Checkbox>
+                                <Checkbox id="checkboxLembrar-me" >Lembrar-me</Checkbox>
                             </Form.Item>
 
-                            <a className="login-form-forgot" href="">
+                            <a className="login-form-forgot" href="" onClick={resetPassword}>
                                 Esqueci minha senha
                             </a>
                         </Form.Item>
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" >
+                            <Button type="primary" htmlType="submit" className="login-form-button" style={{marginBottom:"10px"}} >
                                 Entrar
                             </Button>
-                            Ou <a href="">Registre-se agora!</a>
+                            Ou <a href=""  >Registre-se agora!</a>
                         </Form.Item>
                     </Form>
                     </div>
