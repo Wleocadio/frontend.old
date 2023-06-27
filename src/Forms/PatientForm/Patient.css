@@ -143,6 +143,7 @@
 }
 
 div.ant-modal {
+  margin-top: -50px;
   width: 750px !important;
   height: 500px !important;
 }

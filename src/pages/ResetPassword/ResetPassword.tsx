@@ -16,10 +16,10 @@ export const ResetPassword = () => {
         //console.log(values.email, values.password + ' onFinish')
         try {
 
-            await auth.authenticate(values.email, values.password)
+           // await auth.authenticate(values.email, values.password)
 
-            history.push('/Dashboard');
-            window.location.reload();
+           // history.push('/Dashboard');
+            //window.location.reload();
         } catch (error) {
 
             message.error("Credenciais de login inválidas. Por favor, verifique seu email e senha.")
@@ -37,6 +37,15 @@ export const ResetPassword = () => {
 
         return Promise.resolve();
     };
+    function Login() {
+        try {
+            history.push('/login');
+            window.location.reload();
+        } catch (error) {
+            message.error("Erro ao carregar a Página de login. Por favor, tente mais tarde.")
+        }
+        
+      }
 
 
     return (
@@ -44,21 +53,20 @@ export const ResetPassword = () => {
 
             <Row justify="center" align="middle" style={{ height: "100%" }}>
                 <Col span={5}>
-                    <div className="form-container2">
+                    <div className="form-reset">
                         <div style={{ marginTop: "20px", marginBottom: "20px", textAlign: "center" }}>
                             <Text style={{ color: 'black', fontSize: '22px' }}
                             >
-                                Recuperação de Senha
+                                Esqueceu sua senha?
                             </Text>
                         </div>
-                        <div style={{ marginTop: "10px", marginBottom: "20px", textAlign: "center" }}>
-                            <Text style={{ color: 'black', fontSize: '15px' }}
+                        <div style={{ marginTop: "10px", marginBottom: "25px", textAlign: "center" }}>
+                            <Text style={{ color: 'black', fontSize: '13px' }}
                             >
-                                Para recuperar sua senha, informe seu enredeço de email cadastrado em nosso sistema,
-                                enviaremos um link para a alteração da senha.
+                                Enviaremos um link para a alteração da senha.
                             </Text>
                         </div>
-                        <div style={{ marginTop: "10px", marginBottom: "20px", textAlign: "center" }}>
+                        <div style={{ marginTop: "10px", marginBottom: "10px", textAlign: "center" }}>
 
                             <Form
                                 name="normal_login"
@@ -77,13 +85,22 @@ export const ResetPassword = () => {
                                         },
                                     ]}
                                 >
-                                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+                                    <Input id="inputEmail" prefix={<UserOutlined/>} placeholder="Email" style={{ width: '250px' }}/>
                                 </Form.Item>
 
                                 <Form.Item>
-                                    <Button type="primary" htmlType="submit" >
-                                        Enviar
+                                    <Button type="primary" htmlType="submit" style={{ width: '250px', marginTop: "1px"}} >
+                                    <Text style={{ color: 'white', fontSize: '12px' }}
+                                        >
+                                        Enviar email para recuperar senha
+                                        </Text>
                                     </Button>
+                                    <div style={{ marginTop: "13px", marginBottom: "20px", textAlign: "center" }}>
+                                        <Text style={{ color: 'gray', fontSize: '12px' }}
+                                        >
+                                            Já tem uma conta? <a onClick={Login}>Entrar</a>
+                                        </Text>
+                                    </div>
                                 </Form.Item>
                             </Form>
                         </div>

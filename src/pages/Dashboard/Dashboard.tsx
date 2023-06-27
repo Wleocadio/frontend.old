@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import './Dashboard.css'
-import Schedule from '../../Forms/ScheduleForm/Schedule';
 import Patients from '../../Forms/PatientForm/Patients'
 import { CalendarOutlined, DollarOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined, UserOutlined, } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Avatar, Typography } from 'antd';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import { logoutUser } from '../../components/ProtectedLayout/Logout/logout'
+import CalendarPage from '../Schedule/CalendarPage';
+import { useLocation } from 'react-router-dom';
 
 
 const { Header, Sider, Content } = Layout;
 
 
 export const Dashboard: React.FC = () => {
+  const location = useLocation();
 
   const [collapsed, setCollapsed] = useState(false);
   const { token: { colorBgContainer }, } = theme.useToken();
@@ -19,23 +21,34 @@ export const Dashboard: React.FC = () => {
   const logout = logoutUser()
   const [activePage, setActivePage] = useState<string>('');
 
+  //const activePage = location.pathname === '/schedule' ? 'patientSchedule' : '';
   const handleMenuClick = (page: string) => {
-    setActivePage(page);
+    if (page == activePage) {
+      window.location.reload()
+    } else {
+      setActivePage(page);
+    }
+
   };
 
+
+
   const renderContent = () => {
-    if (activePage === 'patientList') {
-      return <Patients/>;
-    } else if (activePage === 'patientSchedule') {
-      return <Schedule/>;
+    if (activePage === 'patientList' || location.pathname === '/Patients') {
+      return <Patients />;
+    } else if (activePage === 'patientSchedule' || location.pathname === '/Schedule') {
+      return <CalendarPage />;
+    } else if (activePage === 'myPlan' || location.pathname === '/myPlan') {
+      //return <CalendarPage/>;
+
+    } else if (activePage === 'profile' || location.pathname === '/profile') {
+      // return <CalendarPage/>;
     }
 
     // Adicione mais condições para outras páginas do menu, se necessário
 
     return null;
   };
- 
- 
 
 
 
@@ -65,10 +78,10 @@ export const Dashboard: React.FC = () => {
           <Menu.Item key="patientSchedule" icon={<CalendarOutlined style={{ fontSize: '15px' }} />}>
             Agenda
           </Menu.Item>
-          <Menu.Item key="3" icon={<DollarOutlined style={{ fontSize: '15px' }} />}>
-            Planos
+          <Menu.Item key="myPlan" icon={<DollarOutlined style={{ fontSize: '15px' }} />}>
+            Meu Plano
           </Menu.Item>
-          <Menu.Item key="4" icon={<SettingOutlined style={{ fontSize: '15px' }} />}>
+          <Menu.Item key="profile" icon={<SettingOutlined style={{ fontSize: '15px' }} />}>
             Perfil
           </Menu.Item>
           <Menu.Item key="5" icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
@@ -93,11 +106,11 @@ export const Dashboard: React.FC = () => {
           style={{
             margin: '24px 16px',
             padding: 24,
-            minHeight: 280,
+            minHeight: 150,
             background: colorBgContainer,
           }}
         >
-        {renderContent()}
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>
@@ -105,3 +118,4 @@ export const Dashboard: React.FC = () => {
 };
 
 
+export default Dashboard;

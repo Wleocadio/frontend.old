@@ -5,11 +5,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import './login.css'
 import { useState } from "react";
 
-
-
-
-
-
 export const Login = () => {
     const auth = useAuth();
     const history = useHistory();
@@ -71,7 +66,7 @@ export const Login = () => {
             <Row justify="center" align="middle" style={{ height: "100%" }}>
                 <Col span={4}>
                 <div className="form-container-login">
-                    <div style={{ marginTop: "20px", marginBottom: "60px", textAlign: "center" }}>
+                    <div style={{ marginTop: "15px", marginBottom: "40px", textAlign: "center" }}>
                         <Text style={{ color: 'black', fontSize: '19px' }}
                         >
                             Faça login em sua conta
@@ -98,7 +93,7 @@ export const Login = () => {
                                 },
                             ]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
+                            <Input id="imputEmail" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -110,6 +105,7 @@ export const Login = () => {
                             ]}
                         >
                             <Input.Password
+                            id="inputPassword"
                                 prefix={<LockOutlined className="site-form-item-icon" />}
                                 type="password"
                                 placeholder="Password"
@@ -119,7 +115,7 @@ export const Login = () => {
                         </Form.Item>
                         <Form.Item>
                             <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>Lembrar-me</Checkbox>
+                                <Checkbox id="checkboxLembrar-me" >Lembrar-me</Checkbox>
                             </Form.Item>
 
                             <a className="login-form-forgot" href="" onClick={resetPassword}>
@@ -128,10 +124,10 @@ export const Login = () => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button" >
+                            <Button type="primary" htmlType="submit" className="login-form-button" style={{marginBottom:"10px"}} >
                                 Entrar
                             </Button>
-                            Ou <a href="">Registre-se agora!</a>
+                            Ou <a href=""  >Registre-se agora!</a>
                         </Form.Item>
                     </Form>
                     </div>
