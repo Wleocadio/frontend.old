@@ -6,7 +6,7 @@ import { Layout, Menu, Button, theme, Avatar, Typography } from 'antd';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import { logoutUser } from '../../components/ProtectedLayout/Logout/logout'
 import CalendarPage from '../Schedule/CalendarPage';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 
 const { Header, Sider, Content } = Layout;
@@ -14,6 +14,7 @@ const { Header, Sider, Content } = Layout;
 
 export const Dashboard: React.FC = () => {
   const location = useLocation();
+  const history = useHistory()
 
   const [collapsed, setCollapsed] = useState(false);
   const { token: { colorBgContainer }, } = theme.useToken();
@@ -34,14 +35,20 @@ export const Dashboard: React.FC = () => {
 
 
   const renderContent = () => {
-    if (activePage === 'patientList' || location.pathname === '/Patients') {
+    if (activePage === 'patientList' ) {
+      history.push('/patients')
       return <Patients />;
-    } else if (activePage === 'patientSchedule' || location.pathname === '/Schedule') {
+      
+    
+    } else if (activePage === 'patientSchedule' || location.pathname === '/schedule') {
+      history.push('/schedule')
       return <CalendarPage />;
-    } else if (activePage === 'myPlan' || location.pathname === '/myPlan') {
+    } else if (activePage === 'MyPlan' ) {
+      history.push('/myPlan')
       //return <CalendarPage/>;
 
     } else if (activePage === 'profile' || location.pathname === '/profile') {
+      history.push('/profile')
       // return <CalendarPage/>;
     }
 
