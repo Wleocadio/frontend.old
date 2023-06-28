@@ -121,12 +121,11 @@ export const deleteSchedule = async (token: string, id:string) => {
 
 export const createSchedule = async (scheduleData: any, token: string) => {
     try {
-        
-        const response = await Api.post('/schedules', {
+       
+        const response = await Api.post('/schedules', scheduleData, {
             headers: {
                 Authorization: token
             },
-            body:JSON.stringify(scheduleData),
         })
         const responseData = response.data
                 
@@ -140,7 +139,7 @@ export const createSchedule = async (scheduleData: any, token: string) => {
         return responseData
 
     } catch (error) {
-        console.error('Erro ao excluir Agendamento', error)
+        console.error('Erro ao criar Agendamento', error)
         throw error;
     }
 }

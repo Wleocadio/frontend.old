@@ -9,6 +9,7 @@ import { ResetPassword } from './pages/ResetPassword/ResetPassword'
 import { useEffect } from 'react'
 import CalendarPage from './pages/Schedule/CalendarPage'
 import  Layout from './pages/Layout/Layout'
+import Patients from './Forms/PatientForm/Patients'
 
 
 function App() {
@@ -35,21 +36,26 @@ function App() {
             <h2> Bem Vindo</h2>
             
           </Route>
-          <Route path="/Dashboard">
+          <Route path="/dashboard">
             <ProtectedLayout>
             <Dashboard/>
             </ProtectedLayout>
           </Route>
-          <Route path="/Schedule">
+          <Route path="/schedule">
             <ProtectedLayout>
             <Layout content={<CalendarPage/>}/>
+            </ProtectedLayout>
+          </Route>
+          <Route path="/patients">
+            <ProtectedLayout>
+            <Layout content={<Patients/>}/>
             </ProtectedLayout>
           </Route>
 
           <Route path='/login'>
             <Login/>
           </Route>
-          <Route path='/ResetPassword'>
+          <Route path='/resetPassword'>
             <ResetPassword/>
           </Route>
         </Switch>
