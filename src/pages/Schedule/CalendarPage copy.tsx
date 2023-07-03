@@ -3,16 +3,19 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { createSchedule, deleteSchedule, fetchSchedules, getPatients } from '../../context/AuthProvider/util';
+import { createSchedule, deleteSchedule, fetchPatients, fetchSchedules } from '../../context/AuthProvider/util';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import ptBrLocale from '@fullcalendar/core/locales/pt-br';
 import moment from 'moment';
 import 'moment-timezone';
 import 'moment/locale/pt-br';
 import Schedule from '../../Forms/ScheduleForm/Schedule';
-import { Button, Form, Input, Modal, Select, notification } from 'antd';
+import { Button, Col, Form, Input, Modal, Result, Row, Select } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { UserOutlined } from '@ant-design/icons';
+import MiniCalendar from '../../components/Calendar/MiniCalendar';
+import { Dayjs } from 'dayjs';
+
+
 
 
 interface Schedule {
@@ -35,19 +38,22 @@ const CalendarPage: React.FC = () => {
   const auth = useAuth();
   const token = auth.token || '';
   const [selectedEvent, setSelectedEvent] = useState<Schedule | null>(null);
-  const [selectedItems, setSelectedItems] = useState<Schedule | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [showDeleteResult, setShowDeleteResult] = useState(false);
+  const [showCreateResult, setShowCreateResult] = useState(false);
   const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(false);
   const history = useHistory()
+  const { Option } = Select;
+  const id = (auth.id || '').toString();
+  const [form] = Form.useForm();
 
   useEffect(() => {
     showSchedulesOnCalendar([]) // mostra o calendário vazio, sem nenhum agendamento.
     const fetchAndShowSchedules = async () => {
       try {
-
-        const id = (auth.id || '').toString();
-
         const schedules: Schedule[] = await fetchSchedules(token, id);
         showSchedulesOnCalendar(schedules);
       } catch (error) {
@@ -56,16 +62,17 @@ const CalendarPage: React.FC = () => {
     };
     const fetchShowPatients = async () => {
       try {
-
-        const patientData = await getPatients(token,);
-        setPatients(patientData)
+        const token = auth.token || '';
 
 
+        const patientData = await fetchPatients(token, id);
+
+        setPatients(patientData);
       } catch (error) {
         console.error('Erro ao buscar pacientes:', error);
       }
     }
-    
+
     fetchAndShowSchedules();
     fetchShowPatients();
   }, []);
@@ -126,27 +133,38 @@ const CalendarPage: React.FC = () => {
 
       calendar.render();
 
-      calendar.setOption('contentHeight', '530px');
-      calendar.setOption('height', '530px');
+      //calendar.setOption('contentHeight', '530px');
+      //calendar.setOption('height', '530px');
 
 
       // Adiciona Botão "Criar Agendamento"
+      const handleResize = () => {
+        const width = window.innerWidth;
 
+        if (width < 768) {
+          calendar.setOption('contentHeight', '200px');
+          calendar.setOption('height', '200px');
+        } else if (width >= 768 && width < 1024) {
+          calendar.setOption('contentHeight', '400px');
+          calendar.setOption('height', '400px');
+        } else if (width >= 1025 && width < 1367) {
+          calendar.setOption('contentHeight', '450px');
+          calendar.setOption('height', '450px');
+        } else {
+          calendar.setOption('contentHeight', '580px');
+          calendar.setOption('height', '580px');
+        }
+      };
 
+      handleResize();
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        calendar.destroy();
+        window.removeEventListener('resize', handleResize);
+      };
     }
-
-
   };
-
-  const handleScheduleRegistration = () => {
-    const scheduleData = {}
-
-    createSchedule(scheduleData, token);
-  }
-
-
-
-
 
   const getRandomColor = (colorList: string[]): string => {
     const randomIndex = Math.floor(Math.random() * colorList.length);
@@ -162,49 +180,86 @@ const CalendarPage: React.FC = () => {
     setSelectedEvent(null);
 
   };
+  const closeScheduleModal = () => {
+    setModalOpen(false);
 
-
+  };
+  
   const handleDeleteSchedule = () => {
     if (selectedEvent) {
       const { _id } = selectedEvent;
-
+      console.log(token, _id)
       deleteSchedule(token, _id)
+
         .then(() => {
           closeModal();
-          history.push('/Schedule');
-          window.location.reload()
+          setShowDeleteResult(true)
+
         })
         .catch((error) => {
           console.error('Erro ao exluir a agenda:', error)
         })
     }
-
   }
 
-  const handleSubmit = async () => {
-    setLoading(true);
+  const handlePatientSelect = (value: string) => {
+    setSelectedPatientId(value);
+  }
 
-    try {
+  const handleDateSelect = (date: Dayjs, time: Dayjs) => {
+    setSelectedDate(date)
+    setSelectedTime(time)
+  }
 
-      createSchedule({ patients: selectedItems }, token)
-      notification.success({ message: 'Agendamento cadastrado com sucesso!' })
-      setSelectedItems([]);
-    } catch (error) {
-      console.error('Erro ao cadastrar o agendamento:', error);
-      notification.error({ message: 'Erro ao cadastrar o agendamento' });
-    } finally {
-      setLoading(false);
-    }
+  const closeDeleteMessage = () => {
+    setShowDeleteResult(false)
+    history.push('/schedule');
+    window.location.reload()
+  }
+
+   const closeCreateMessage = () => {
+    setShowCreateResult(false)
+    history.push('/schedule');
+    window.location.reload()
   }
 
 
+   const handleSave = () => {
 
+    //const selectedDate = form.getFieldValue('selectedDate');
+    const serviceValue = form.getFieldValue('serviceValue');
+    const duration = form.getFieldValue('duration');
+    const notes = form.getFieldValue('notes');
+    //console.log(selectedDate, selectedTime, serviceValue, duration, notes, selectedPatientId, token)
+    if (selectedDate && selectedTime && selectedPatientId) {
 
+      const formattedDate = selectedDate ? selectedDate.format('YYYY-MM-DD') : '';
+      const formattedTime = selectedTime ? selectedTime.format('HH:mm:ss') : '';
+      const dateTime = `${formattedDate}T${formattedTime}Z`;
 
+      const scheduleData = {
+        professionalId: id,
+        date: dateTime,
+        serviceValue: serviceValue,
+        notes: notes,
+        duration: duration,
+        patientId: selectedPatientId
+      };
+
+      console.log(scheduleData, token);
+
+      createSchedule(scheduleData, token)
+        .then(() => {
+          setShowCreateResult(true)
+        })
+    };
+    form.resetFields();
+    setModalOpen(false);
+  };
 
   return (
     <>
-      <div ref={calendarRef}></div>
+      <div className="calendar-container" ref={calendarRef} ></div>
       {selectedEvent && (
         <Modal visible={true} onCancel={closeModal} footer={[
 
@@ -214,63 +269,123 @@ const CalendarPage: React.FC = () => {
           <Button key="cancel" onClick={closeModal}>
             Cancelar
           </Button>,
-
-
         ]}
-
           maskClosable={false}
-
         >
           {/* Conteúdo do modal com os dados da consulta */}
           <h2 className='modal-title' >{selectedEvent.patientName}</h2>
           <p>Data: {moment(selectedEvent.date).add(3, 'hours').format('DD/MM/YYYY HH:mm')}</p>
-          <p>Valor da Consulta: R$: {selectedEvent.serviceValue},00 Reais</p>
-          <p>Notas: {selectedEvent.notes}</p>
+          <p>Valor da Atendimento: R$: {selectedEvent.serviceValue},00 Reais</p>
+          <p>Duração do Atendimento: {selectedEvent.duration} Minutos</p>
+          <p>Observação: {selectedEvent.notes}</p>
 
           {/* Adicione outros campos do objeto 'selectedEvent' conforme necessário */}
         </Modal>
       )}
       <Modal
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         visible={modalOpen}
         onCancel={() => setModalOpen(false)}
+        footer={[
+          <Button id='btnSave' key="salvar" type="primary" onClick={handleSave}>
+            Salvar
+          </Button>,
+          <Button id='btnClose' key="cancel" onClick={closeScheduleModal}>
+            Cancelar
+          </Button>,
+        ]}
+        maskClosable={false}
       >
         <h2 style={{ textAlign: 'center' }}> Agendar Atendimento</h2>
-        <Form>
-          <Form.Item className='item-label'>
-            <label htmlFor="name">Nome do Paciente</label>
 
-            <Select
-              mode="multiple"
-              placeholder="Selecione um ou mais pacientes"
-              value={selectedItems}
-              onChange={setSelectedItems}
-              style={{ width: '100%' }}
-              options={patients.map((patient) => ({
-                value: patient._id,
-                label: patient.patientName,
-              }))}
-            />
-          </Form.Item>
-          <Form.Item className='item-label'>
-            <label htmlFor="name">Valor do Atendimento</label>
-            <Input id='inputServiceValue'></Input>
-          </Form.Item>
-          <Form.Item className='item-label'>
-            <label htmlFor="name">Observações</label>
-            <Input.TextArea id='inputAnotacao' className='input-item'></Input.TextArea>
-          </Form.Item>
-          <Form.Item className='item-label'>
-            <label htmlFor="name">Duração do Atendimento</label>
-            <Input id='inputduration' className='input-item'></Input>
-          </Form.Item>
+        <Form
+          form={form}
+          style={{ display: 'flex' }}
+          onFinish={handleSave}
+        >
+          <Row gutter={[16, 9]}>
+            <Col span={24}>
+              <Form.Item name="selectedDate" noStyle>
+                <MiniCalendar visible={modalOpen} onDateSelect={handleDateSelect}></MiniCalendar>
+              </Form.Item>
+            </Col>
 
+            <Col span={15}>
+              <Form.Item name="inputNomePaciente">
+                <label htmlFor="name">Nome do Paciente</label>
+                <Select
+                  id='inputNomePaciente'
+                  className='input-item'
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option && option.children
+                      ? String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      : false
+                  }
+                  onSelect={handlePatientSelect}
+                >
+                  {patients.map((patient: any) => (
+                    <Option key={patient._id} value={patient._id}>
+                      {patient.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
 
+            <Col span={3}>
+              <label htmlFor="name">Valor</label>
+              <Form.Item name="serviceValue">
+                <Input id='inputServiceValue' />
+              </Form.Item>
+            </Col>
 
+            <Col span={3}>
+              <label htmlFor="name">Duração</label>
+              <Form.Item name="duration">
+                <Input id='inputduration' className='input-item' />
+              </Form.Item>
+            </Col>
 
-
-
+            <Col span={24}>
+              <label htmlFor="name">Observações</label>
+              <Form.Item name="notes">
+                <Input.TextArea id='inputAnotacao' rows={5}></Input.TextArea>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
-
+      </Modal>
+      <Modal
+        visible={showDeleteResult}
+        centered
+        footer={null}
+      >
+        <Result
+          status="success"
+          title="Agendamento excluido com Sucesso!"
+          extra={[
+            <Button id='btnOkDeleteMessage' type="primary" key="ok" onClick={closeDeleteMessage}>
+              OK
+            </Button>
+          ]}
+        ></Result>
+      </Modal>
+      <Modal
+        visible={showCreateResult}
+        centered
+        footer={null}
+      >
+        <Result
+          status="success"
+          title="Agendamento realizado com Sucesso!"
+          extra={[
+            <Button id='btnOkDeleteMessage' type="primary" key="ok" onClick={closeCreateMessage}>
+              OK
+            </Button>
+          ]}
+        ></Result>
       </Modal>
     </>
   );
