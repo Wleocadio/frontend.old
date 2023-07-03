@@ -1,10 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import './Patient.css'
 
-import { Avatar, Button, Form, Input, List, Modal, Tabs  } from 'antd';
+import { Avatar, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import { fetchPatients } from '../../context/AuthProvider/util';
 import { useAuth } from '../../context/AuthProvider/useAuth';
+import { UserAddOutlined } from '@ant-design/icons';
+import moment from 'moment';
+import RegisterPatients from '../../components/Register/RegisterPatients/RegisterPatients';
 
 
 
@@ -41,8 +44,11 @@ const Patients: React.FC = () => {
   const ContainerHeight = 500;
   const [selectedPatient, setSelectedPatient] = useState<UserItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [searchText, setsearchText] = useState('');
   const [patients, setPatients] = useState<UserItem[]>([]);
   const { TabPane } = Tabs;
+
 
 
 
@@ -73,32 +79,79 @@ const Patients: React.FC = () => {
     fetchaData();
   }, [auth]);
 
+  const handleSearch = (value: string) => {
+    setsearchText(value);
+  }
+
 
   const openModal = (patient: UserItem) => {
     setSelectedPatient(patient);
     setModalVisible(true)
   }
 
-  const closeModal = () => {
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const closeModals = () => {
     setSelectedPatient(null);
     setModalVisible(false)
   }
 
   const handleSave = () => {
     // Implemente aqui a lógica para salvar as alterações feitas no modal
-    closeModal();
+    closeModals();
   }
+
+  const filteredData = patients.filter((patients) => {
+    return patients.name.toLocaleLowerCase().includes(searchText.toLocaleLowerCase())
+  })
+
+
 
   const formattedDateOfBirth = selectedPatient?.dateBirth ? new Date(selectedPatient.dateBirth).toLocaleDateString('pt-BR') : '';
 
 
   return (
     <div>
+      <div>
+        <div>
+          <Row gutter={10}>
+            <Col></Col>
+            <Col span={22}>
+            <Tooltip title= "Digite o nome do paciente">
+              <Input
+                style={{ borderColor: 'blue' }}
+                placeholder="Digite o nome do paciente"
+                value={searchText}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+              </Tooltip>
+            </Col>
+            <Col span={1}>
+              <Tooltip title= "Adicionar Usuário">
+              <Button icon={<UserAddOutlined style={{ fontSize: '20px' }} />} style={{borderColor: 'blue' }} onClick={handleOpenModal}></Button>
+              </Tooltip>
+            </Col>
+          </Row>
+
+
+
+        </div>
+        {showModal && <RegisterPatients closeModal={handleCloseModal} />}
+
+
+
+      </div>
       <List>
         <VirtualList
           height={ContainerHeight}
           className="content"
-          data={patients}
+          data={filteredData.length > 0 ? filteredData : patients}
           itemHeight={47}
           itemKey="_id"
         >
@@ -107,26 +160,33 @@ const Patients: React.FC = () => {
               <List.Item.Meta
                 avatar={<Avatar src={response.image} />}
                 title={<a onClick={() => openModal(response)}>{response.name}</a>}
-                description={["Email: ", response.mail, " Telefone: " + response.phone]}
+                description={[
+                  "Nascimento: " + moment(response.dateBirth).format('DD/MM/YYYY') + " | ",
+                  "Email: " + response.mail + " | ",
+                  "Telefone: " + response.phone + " | ",
+                  "Contato de Emergencia: " + response.emergencyContact
+                ]}
+
               />
-              <div>Content</div>
+
             </List.Item>
           )}
         </VirtualList>
       </List>
       <Modal
+        //style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         visible={modalVisible}
-        onCancel={closeModal}
+        onCancel={closeModals}
         footer={[
           <Button key="save" type="primary" onClick={handleSave}>
             Salvar
           </Button>,
-          <Button key="cancel" onClick={closeModal}>
+          <Button key="cancel" onClick={closeModals}>
             Cancelar
           </Button>,
 
         ]}
-        
+
         maskClosable={false}
 
       >
@@ -134,76 +194,95 @@ const Patients: React.FC = () => {
         {selectedPatient && (
 
           <>
-            <Tabs defaultActiveKey="1" className="custom-tabs">
+            <Tabs style={{ alignItems: 'center' }} defaultActiveKey="1" >
               <TabPane tab="Informações Pessoais" key="1" className="custom-tabs">
-                <Form className='item-form'>
-                  <div className="form-row">
-                    <Form.Item className='item-label' label="">
-                      <label htmlFor="name">Nome</label>
-                      <Input id="inputName" value={selectedPatient.name} disabled />
-                    </Form.Item>
-                  </div>
-                  <div className="form-row">
-                    <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">CPF</label>
-                      <Input id='inputCPF' className='input-item' value={selectedPatient.cpf} disabled />
-                    </Form.Item>
-                    <Form.Item className='item-label' label="">
-                      <label htmlFor="name">Email</label>
-                      <Input id='inputEmail' className='input-item' value={selectedPatient.mail} disabled />
-                    </Form.Item>
-                    <Form.Item className='item-label' label="">
-                      <label htmlFor="name">Telefone</label>
-                      <Input id='inputTelefone' className='input-item' value={selectedPatient.phone} disabled />
-                    </Form.Item>
-
-                  </div>
-                  <div className="form-row">
-                    <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Data de Nascimento</label>
-                      <Input id='inputDataNacismento' className=' .input-item.small' value={formattedDateOfBirth} readOnly />
-                    </Form.Item>
-                    <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Sexo</label>
-                      <Input id='inputSexo' className=' .input-item.small' value={selectedPatient.gender} />
-                    </Form.Item>
-                    <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Estado Civil</label>
-                      <Input id='inputEstadoCivil' className='.custom-form-item .input-item.small' value={selectedPatient.gender} />
-                    </Form.Item>
-
-                  </div>
-
-
-                  <div className="form-row">
-                    <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">CEP</label>
-                      <Input id='inputCep' className='.custom-form-item .input-item.small' value={selectedPatient.zipCode} />
-                    </Form.Item>
-                    <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Estado</label>
-                      <Input id='inputEstado' className='.custom-form-item .input-item.small' value={selectedPatient.state} />
-                    </Form.Item>
-                    <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Cidade</label>
-                      <Input id='inputCidade' className='.custom-form-item .input-item.small' value={selectedPatient.city} />
-                    </Form.Item>
-                  </div>
-                  <div className="form-row">
-                    <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Bairro</label>
-                      <Input id='inputBairro' className='.custom-form-item .input-item.small' value={selectedPatient.district} />
-                    </Form.Item>
-                    <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                      <label htmlFor="name">Rua</label>
-                      <Input id='inputRua' className='.custom-form-item .input-item.small' value={selectedPatient.street} />
-                    </Form.Item>
-                    <Form.Item className='item-label'>
-                      <label htmlFor="name">Número</label>
-                      <Input id='inputNumeroResidencia' className='.custom-form-item .input-item.small' value={selectedPatient.number} />
-                    </Form.Item>
-                  </div>
-
+                <Form style={{ display: 'flex' }} className='item-form'>
+                  <Row gutter={[16, 0]}>
+                    <Col span={17}>
+                      <Form.Item>
+                        <label htmlFor="name">Nome</label>
+                        <Input id="inputName" value={selectedPatient.name} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item>
+                        <label htmlFor="name">CPF</label>
+                        <Input id='inputCPF' value={selectedPatient.cpf} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={9}>
+                      <Form.Item>
+                        <label htmlFor="name">Email</label>
+                        <Input id='inputEmail' value={selectedPatient.mail} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={5}>
+                      <Form.Item>
+                        <label htmlFor="name">Telefone</label>
+                        <Input id='inputTelefone' value={selectedPatient.phone} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={5}>
+                      <Form.Item >
+                        <label htmlFor="name">Nascimento</label>
+                        <Input id='inputDataNacismento' value={formattedDateOfBirth} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item>
+                        <label htmlFor="name">Sexo</label>
+                        <Input id='inputSexo' value={selectedPatient.gender} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item>
+                        <label htmlFor="name">Estado Civil</label>
+                        <Input id='inputEstadoCivil' value={selectedPatient.gender} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={10}>
+                      <Form.Item>
+                        <label htmlFor="name">Profissão</label>
+                        <Input id='inputEstadoCivil' value={selectedPatient.gender} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item >
+                        <label htmlFor="name">CEP</label>
+                        <Input id='inputCep' value={selectedPatient.zipCode} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={5}>
+                      <Form.Item >
+                        <label htmlFor="name">Estado</label>
+                        <Input id='inputEstado' value={selectedPatient.state} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={5}>
+                      <Form.Item >
+                        <label htmlFor="name">Cidade</label>
+                        <Input id='inputCidade' value={selectedPatient.city} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item >
+                        <label htmlFor="name">Bairro</label>
+                        <Input id='inputBairro' value={selectedPatient.district} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item>
+                        <label htmlFor="name">Rua</label>
+                        <Input id='inputRua' value={selectedPatient.street} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item >
+                        <label htmlFor="name">Número</label>
+                        <Input id='inputNumeroResidencia' value={selectedPatient.number} />
+                      </Form.Item>
+                    </Col>
+                  </Row>
                 </Form>
               </TabPane>
 
@@ -212,12 +291,11 @@ const Patients: React.FC = () => {
                   <Tabs defaultActiveKey="1" className="custom-tabs">
                     <TabPane tab="Demanda Inicial" key="4">
                       <Form className='item-form'>
-                        <div className="form-row">
+                        <Col span={24}>
                           <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
                             <Input.TextArea id='inputDemandaInicial' className='input-item' value={selectedPatient.initialDemand} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'initialDemand')} rows={10} />
-                           
                           </Form.Item>
-                        </div>
+                        </Col>
                       </Form>
                     </TabPane>
                     <TabPane id='tabObjetivoTratamento' tab="Objetivo do Tratamento" key="5">
@@ -253,21 +331,29 @@ const Patients: React.FC = () => {
               </TabPane>
               <TabPane id='tabContatoEmergencia' tab="Contato de Emergência" key="3">
                 <Form className='item-form'>
+                  <Row gutter={10}>
+                    <Col span={8}>
+                      <Form.Item >
+                        <label htmlFor="name">Contato de Emergência</label>
+                        <Input id='inputContatoEmergencia' value={selectedPatient.nameEmergencyContact} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item >
+                        <label htmlFor="name">Telefone de Emergência</label>
+                        <Input id='inputTelefoneEmergencia' value={selectedPatient.emergencyContact} />
+                      </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                      <Form.Item >
+                        <label htmlFor="name">Celular de Emergência</label>
+                        <Input id='inputCelularEmergencia' value={selectedPatient.emergencyContact} />
+                      </Form.Item>
+                    </Col>
 
 
-                  <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                    <label htmlFor="name">Contato de Emergência</label>
-                    <Input id='inputContatoEmergencia' className='.custom-form-item .input-item.small' value={selectedPatient.nameEmergencyContact} />
-                  </Form.Item>
-                  <Form.Item className='item-label'>
-                    <label htmlFor="name">Telefone de Emergência</label>
-                    <Input id='inputTelefoneEmergencia' className='.custom-form-item .input-item.small' value={selectedPatient.emergencyContact} />
-                  </Form.Item>
-                  <Form.Item className='item-label'>
-                    <label htmlFor="name">Celular de Emergência</label>
-                    <Input id='inputCelularEmergencia' className='.custom-form-item .input-item.small' value={selectedPatient.emergencyContact} />
-                  </Form.Item>
 
+                  </Row>
                 </Form>
 
               </TabPane>
@@ -277,9 +363,6 @@ const Patients: React.FC = () => {
           </>
         )}
       </Modal>
-    
-
-
     </div >
   );
 };

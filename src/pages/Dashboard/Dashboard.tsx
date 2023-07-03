@@ -35,15 +35,15 @@ export const Dashboard: React.FC = () => {
 
 
   const renderContent = () => {
-    if (activePage === 'patientList' ) {
+    if (activePage === 'patientList') {
       history.push('/patients')
       return <Patients />;
-      
-    
+
+
     } else if (activePage === 'patientSchedule' || location.pathname === '/schedule') {
       history.push('/schedule')
       return <CalendarPage />;
-    } else if (activePage === 'MyPlan' ) {
+    } else if (activePage === 'MyPlan') {
       history.push('/myPlan')
       //return <CalendarPage/>;
 
@@ -71,7 +71,7 @@ export const Dashboard: React.FC = () => {
           selectedKeys={[activePage]}
           onClick={({ key }) => handleMenuClick(key as string)}
         >
-          <div >
+          <div>
             <Avatar className="avatar" icon={<UserOutlined style={{ fontSize: '32px' }} />} />
           </div>
 
@@ -97,17 +97,19 @@ export const Dashboard: React.FC = () => {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header style={{ display: 'flex', padding: 0, background: colorBgContainer }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
             style={{
+
               fontSize: '10px',
               width: 64,
               height: 64,
             }}
           />
+          
         </Header>
         <Content
           style={{

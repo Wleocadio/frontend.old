@@ -82,6 +82,7 @@ export const fetchSchedules = async (token: string, id:string) => {
         return response.data;
 
     } catch (error) {
+        
         console.error('Erro ao buscar agenda', error)
         throw error;
     }
@@ -140,6 +141,33 @@ export const createSchedule = async (scheduleData: any, token: string) => {
 
     } catch (error) {
         console.error('Erro ao criar Agendamento', error)
+        throw error;
+    }
+}
+
+export const createPatients = async (patientData: any, token: string) => {
+    try {
+      
+        const response = await Api.post('/patient/create', patientData, {
+            headers: {
+                Authorization: token
+            },
+        })
+        console.log(response.data)
+        const responseData = response.data
+                
+            if (response.status = 201){
+                console.log("Paciente cadastrado com sucesso")
+
+            } else {
+                console.log("Erro ao cadastrar paciente")
+            }
+
+        return responseData
+
+    } catch (error) {
+
+        console.error('Erro ao criar Paciente', error)
         throw error;
     }
 }

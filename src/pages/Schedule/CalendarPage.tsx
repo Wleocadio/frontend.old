@@ -6,11 +6,11 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import { createSchedule, deleteSchedule, fetchPatients, fetchSchedules } from '../../context/AuthProvider/util';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import ptBrLocale from '@fullcalendar/core/locales/pt-br';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import 'moment-timezone';
 import 'moment/locale/pt-br';
 import Schedule from '../../Forms/ScheduleForm/Schedule';
-import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Result, Row, Select } from 'antd';
 import { useHistory } from 'react-router-dom';
 import MiniCalendar from '../../components/Calendar/MiniCalendar';
 import { Dayjs } from 'dayjs';
@@ -42,6 +42,8 @@ const CalendarPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [showDeleteResult, setShowDeleteResult] = useState(false);
+  const [showCreateResult, setShowCreateResult] = useState(false);
   const [patients, setPatients] = useState([]);
   const history = useHistory()
   const { Option } = Select;
@@ -52,9 +54,6 @@ const CalendarPage: React.FC = () => {
     showSchedulesOnCalendar([]) // mostra o calendário vazio, sem nenhum agendamento.
     const fetchAndShowSchedules = async () => {
       try {
-
-
-
         const schedules: Schedule[] = await fetchSchedules(token, id);
         showSchedulesOnCalendar(schedules);
       } catch (error) {
@@ -164,13 +163,8 @@ const CalendarPage: React.FC = () => {
         calendar.destroy();
         window.removeEventListener('resize', handleResize);
       };
-
     }
-
-
   };
-
-
 
   const getRandomColor = (colorList: string[]): string => {
     const randomIndex = Math.floor(Math.random() * colorList.length);
@@ -186,8 +180,10 @@ const CalendarPage: React.FC = () => {
     setSelectedEvent(null);
 
   };
-  ;
+  const closeScheduleModal = () => {
+    setModalOpen(false);
 
+  };
 
   const handleDeleteSchedule = () => {
     if (selectedEvent) {
@@ -197,27 +193,35 @@ const CalendarPage: React.FC = () => {
 
         .then(() => {
           closeModal();
-          history.push('/schedule');
-          window.location.reload()
+          setShowDeleteResult(true)
+
         })
         .catch((error) => {
           console.error('Erro ao exluir a agenda:', error)
         })
     }
-
   }
 
   const handlePatientSelect = (value: string) => {
     setSelectedPatientId(value);
   }
 
-
   const handleDateSelect = (date: Dayjs, time: Dayjs) => {
     setSelectedDate(date)
     setSelectedTime(time)
-
   }
 
+  const closeDeleteMessage = () => {
+    setShowDeleteResult(false)
+    history.push('/schedule');
+    window.location.reload()
+  }
+
+  const closeCreateMessage = () => {
+    setShowCreateResult(false)
+    history.push('/schedule');
+    window.location.reload()
+  }
 
 
   const handleSave = () => {
@@ -228,7 +232,7 @@ const CalendarPage: React.FC = () => {
     const notes = form.getFieldValue('notes');
     //console.log(selectedDate, selectedTime, serviceValue, duration, notes, selectedPatientId, token)
     if (selectedDate && selectedTime && selectedPatientId) {
-     
+
       const formattedDate = selectedDate ? selectedDate.format('YYYY-MM-DD') : '';
       const formattedTime = selectedTime ? selectedTime.format('HH:mm:ss') : '';
       const dateTime = `${formattedDate}T${formattedTime}Z`;
@@ -242,24 +246,16 @@ const CalendarPage: React.FC = () => {
         patientId: selectedPatientId
       };
 
-      console.log(scheduleData,token);
+      console.log(scheduleData, token);
 
       createSchedule(scheduleData, token)
-        .then((responseData) => {
-          console.log('Agendamento cadastrado com sucesso', responseData);
+        .then(() => {
+          setShowCreateResult(true)
         })
-        .catch((error) => {
-          console.error('Erro ao cadastrar agendamento', error);
-        });
     };
     form.resetFields();
     setModalOpen(false);
-    window.location.reload();
-
   };
-
-
-
 
   return (
     <>
@@ -273,12 +269,8 @@ const CalendarPage: React.FC = () => {
           <Button key="cancel" onClick={closeModal}>
             Cancelar
           </Button>,
-
-
         ]}
-
           maskClosable={false}
-
         >
           {/* Conteúdo do modal com os dados da consulta */}
           <h2 className='modal-title' >{selectedEvent.patientName}</h2>
@@ -291,14 +283,14 @@ const CalendarPage: React.FC = () => {
         </Modal>
       )}
       <Modal
-        style={{ display: 'flex', marginTop: '2%', justifyContent: 'center', alignItems: 'center' }}
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         visible={modalOpen}
         onCancel={() => setModalOpen(false)}
         footer={[
           <Button id='btnSave' key="salvar" type="primary" onClick={handleSave}>
             Salvar
           </Button>,
-          <Button id='btnClose' key="cancel" onClick={closeModal}>
+          <Button id='btnClose' key="cancel" onClick={closeScheduleModal}>
             Cancelar
           </Button>,
         ]}
@@ -342,31 +334,61 @@ const CalendarPage: React.FC = () => {
               </Form.Item>
             </Col>
 
-            <Col span={3}>
+            <Col span={3.5}>
               <label htmlFor="name">Valor</label>
               <Form.Item name="serviceValue">
-                <Input id='inputServiceValue' />
+                <InputNumber min={0} max={1000} id='inputServiceValue' />
               </Form.Item>
             </Col>
-
+            
             <Col span={3}>
-              <label htmlFor="name">Duração</label>
+              <label htmlFor="name">Minutos</label>
               <Form.Item name="duration">
-                <Input id='inputduration' className='input-item' />
+                <InputNumber min={0} max={60} id='inputduration' />
               </Form.Item>
             </Col>
 
             <Col span={24}>
               <label htmlFor="name">Observações</label>
               <Form.Item name="notes">
-                <Input.TextArea id='inputAnotacao' rows={5}></Input.TextArea>
+                <Input.TextArea maxLength={450} id='inputAnotacao' rows={5}></Input.TextArea>
               </Form.Item>
             </Col>
           </Row>
         </Form>
       </Modal>
+      <Modal
+        visible={showDeleteResult}
+        centered
+        footer={null}
+      >
+        <Result
+          status="success"
+          title="Agendamento excluido com Sucesso!"
+          extra={[
+            <Button id='btnOkDeleteMessage' type="primary" key="ok" onClick={closeDeleteMessage}>
+              OK
+            </Button>
+          ]}
+        ></Result>
+      </Modal>
+      <Modal
+        visible={showCreateResult}
+        centered
+        footer={null}
+      >
+        <Result
+          status="success"
+          title="Agendamento realizado com Sucesso!"
+          extra={[
+            <Button id='btnOkMessageSuccess' type="primary" key="ok" onClick={closeCreateMessage}>
+              OK
+            </Button>
+          ]}
+        ></Result>
+      </Modal>
     </>
   );
 };
 
-export default CalendarPage
+export default CalendarPage;
