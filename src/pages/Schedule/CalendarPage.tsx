@@ -10,10 +10,12 @@ import moment from 'moment';
 import 'moment-timezone';
 import 'moment/locale/pt-br';
 import Schedule from '../../Forms/ScheduleForm/Schedule';
-import { Button, Col, Form, Input, InputNumber, Modal, Result, Row, Select } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Result, Row, Select, Tooltip, theme } from 'antd';
 import { useHistory } from 'react-router-dom';
 import MiniCalendar from '../../components/Calendar/MiniCalendar';
 import { Dayjs } from 'dayjs';
+import { Header } from 'antd/es/layout/layout';
+import { UserAddOutlined } from '@ant-design/icons';
 
 
 
@@ -49,6 +51,8 @@ const CalendarPage: React.FC = () => {
   const { Option } = Select;
   const id = (auth.id || '').toString();
   const [form] = Form.useForm();
+  const { token: { colorBgContainer }, } = theme.useToken();
+
 
   useEffect(() => {
     showSchedulesOnCalendar([]) // mostra o calendário vazio, sem nenhum agendamento.
@@ -185,6 +189,10 @@ const CalendarPage: React.FC = () => {
 
   };
 
+  const handlerEventOpenSchedule = () =>{
+    setModalOpen(true)
+  }
+
   const handleDeleteSchedule = () => {
     if (selectedEvent) {
       const { _id } = selectedEvent;
@@ -259,136 +267,137 @@ const CalendarPage: React.FC = () => {
 
   return (
     <>
-      <div className="calendar-container" ref={calendarRef} ></div>
-      {selectedEvent && (
-        <Modal visible={true} onCancel={closeModal} footer={[
 
-          <Button key="delete" type="primary" onClick={handleDeleteSchedule} danger>
-            Excluir
-          </Button>,
-          <Button key="cancel" onClick={closeModal}>
-            Cancelar
-          </Button>,
-        ]}
+        <div className="calendar-container" ref={calendarRef} ></div>
+        {selectedEvent && (
+          <Modal visible={true} onCancel={closeModal} footer={[
+
+            <Button key="delete" type="primary" onClick={handleDeleteSchedule} danger>
+              Excluir
+            </Button>,
+            <Button key="cancel" onClick={closeModal}>
+              Cancelar
+            </Button>,
+          ]}
+            maskClosable={false}
+          >
+            {/* Conteúdo do modal com os dados da consulta */}
+            <h2 className='modal-title' >{selectedEvent.patientName}</h2>
+            <p>Data: {moment(selectedEvent.date).add(3, 'hours').format('DD/MM/YYYY HH:mm')}</p>
+            <p>Valor da Atendimento: R$: {selectedEvent.serviceValue},00 Reais</p>
+            <p>Duração do Atendimento: {selectedEvent.duration} Minutos</p>
+            <p>Observação: {selectedEvent.notes}</p>
+
+            {/* Adicione outros campos do objeto 'selectedEvent' conforme necessário */}
+          </Modal>
+        )}
+        <Modal
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          visible={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          footer={[
+            <Button id='btnSave' key="salvar" type="primary" onClick={handleSave}>
+              Salvar
+            </Button>,
+            <Button id='btnClose' key="cancel" onClick={closeScheduleModal}>
+              Cancelar
+            </Button>,
+          ]}
           maskClosable={false}
         >
-          {/* Conteúdo do modal com os dados da consulta */}
-          <h2 className='modal-title' >{selectedEvent.patientName}</h2>
-          <p>Data: {moment(selectedEvent.date).add(3, 'hours').format('DD/MM/YYYY HH:mm')}</p>
-          <p>Valor da Atendimento: R$: {selectedEvent.serviceValue},00 Reais</p>
-          <p>Duração do Atendimento: {selectedEvent.duration} Minutos</p>
-          <p>Observação: {selectedEvent.notes}</p>
+          <h2 style={{ textAlign: 'center' }}> Agendar Atendimento</h2>
 
-          {/* Adicione outros campos do objeto 'selectedEvent' conforme necessário */}
+          <Form
+            form={form}
+            style={{ display: 'flex' }}
+            onFinish={handleSave}
+          >
+            <Row gutter={[16, 9]}>
+              <Col span={24}>
+                <Form.Item name="selectedDate" noStyle>
+                  <MiniCalendar visible={modalOpen} onDateSelect={handleDateSelect}></MiniCalendar>
+                </Form.Item>
+              </Col>
+
+              <Col span={15}>
+                <Form.Item name="inputNomePaciente">
+                  <label htmlFor="name">Nome do Paciente</label>
+                  <Select
+                    id='inputNomePaciente'
+                    className='input-item'
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option && option.children
+                        ? String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        : false
+                    }
+                    onSelect={handlePatientSelect}
+                  >
+                    {patients.map((patient: any) => (
+                      <Option key={patient._id} value={patient._id}>
+                        {patient.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col span={3.5}>
+                <label htmlFor="name">Valor</label>
+                <Form.Item name="serviceValue">
+                  <InputNumber min={0} max={1000} id='inputServiceValue' />
+                </Form.Item>
+              </Col>
+
+              <Col span={3}>
+                <label htmlFor="name">Minutos</label>
+                <Form.Item name="duration">
+                  <InputNumber min={0} max={60} id='inputduration' />
+                </Form.Item>
+              </Col>
+
+              <Col span={24}>
+                <label htmlFor="name">Observações</label>
+                <Form.Item name="notes">
+                  <Input.TextArea maxLength={450} id='inputAnotacao' rows={5}></Input.TextArea>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
         </Modal>
-      )}
-      <Modal
-        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        visible={modalOpen}
-        onCancel={() => setModalOpen(false)}
-        footer={[
-          <Button id='btnSave' key="salvar" type="primary" onClick={handleSave}>
-            Salvar
-          </Button>,
-          <Button id='btnClose' key="cancel" onClick={closeScheduleModal}>
-            Cancelar
-          </Button>,
-        ]}
-        maskClosable={false}
-      >
-        <h2 style={{ textAlign: 'center' }}> Agendar Atendimento</h2>
-
-        <Form
-          form={form}
-          style={{ display: 'flex' }}
-          onFinish={handleSave}
+        <Modal
+          visible={showDeleteResult}
+          centered
+          footer={null}
         >
-          <Row gutter={[16, 9]}>
-            <Col span={24}>
-              <Form.Item name="selectedDate" noStyle>
-                <MiniCalendar visible={modalOpen} onDateSelect={handleDateSelect}></MiniCalendar>
-              </Form.Item>
-            </Col>
-
-            <Col span={15}>
-              <Form.Item name="inputNomePaciente">
-                <label htmlFor="name">Nome do Paciente</label>
-                <Select
-                  id='inputNomePaciente'
-                  className='input-item'
-                  showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option && option.children
-                      ? String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                      : false
-                  }
-                  onSelect={handlePatientSelect}
-                >
-                  {patients.map((patient: any) => (
-                    <Option key={patient._id} value={patient._id}>
-                      {patient.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-
-            <Col span={3.5}>
-              <label htmlFor="name">Valor</label>
-              <Form.Item name="serviceValue">
-                <InputNumber min={0} max={1000} id='inputServiceValue' />
-              </Form.Item>
-            </Col>
-            
-            <Col span={3}>
-              <label htmlFor="name">Minutos</label>
-              <Form.Item name="duration">
-                <InputNumber min={0} max={60} id='inputduration' />
-              </Form.Item>
-            </Col>
-
-            <Col span={24}>
-              <label htmlFor="name">Observações</label>
-              <Form.Item name="notes">
-                <Input.TextArea maxLength={450} id='inputAnotacao' rows={5}></Input.TextArea>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-      <Modal
-        visible={showDeleteResult}
-        centered
-        footer={null}
-      >
-        <Result
-          status="success"
-          title="Agendamento excluido com Sucesso!"
-          extra={[
-            <Button id='btnOkDeleteMessage' type="primary" key="ok" onClick={closeDeleteMessage}>
-              OK
-            </Button>
-          ]}
-        ></Result>
-      </Modal>
-      <Modal
-        visible={showCreateResult}
-        centered
-        footer={null}
-      >
-        <Result
-          status="success"
-          title="Agendamento realizado com Sucesso!"
-          extra={[
-            <Button id='btnOkMessageSuccess' type="primary" key="ok" onClick={closeCreateMessage}>
-              OK
-            </Button>
-          ]}
-        ></Result>
-      </Modal>
-    </>
-  );
+          <Result
+            status="success"
+            title="Agendamento excluido com Sucesso!"
+            extra={[
+              <Button id='btnOkDeleteMessage' type="primary" key="ok" onClick={closeDeleteMessage}>
+                OK
+              </Button>
+            ]}
+          ></Result>
+        </Modal>
+        <Modal
+          visible={showCreateResult}
+          centered
+          footer={null}
+        >
+          <Result
+            status="success"
+            title="Agendamento realizado com Sucesso!"
+            extra={[
+              <Button id='btnOkMessageSuccess' type="primary" key="ok" onClick={closeCreateMessage}>
+                OK
+              </Button>
+            ]}
+          ></Result>
+        </Modal>
+      </>
+      );
 };
 
-export default CalendarPage;
+      export default CalendarPage;
