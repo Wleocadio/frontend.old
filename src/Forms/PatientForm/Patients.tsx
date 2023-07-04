@@ -1,14 +1,15 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import './Patient.css'
-
-import { Avatar, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip } from 'antd';
+import { Layout, Avatar, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip, theme, Typography } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import { fetchPatients } from '../../context/AuthProvider/util';
 import { useAuth } from '../../context/AuthProvider/useAuth';
-import { UserAddOutlined } from '@ant-design/icons';
+import { SearchOutlined, UserAddOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import RegisterPatients from '../../components/Register/RegisterPatients/RegisterPatients';
+import PatientCalendar from '../../components/Calendar/PatientCalendar';
 
+const { Header } = Layout;
 
 
 
@@ -41,22 +42,27 @@ interface UserItem {
 
 const Patients: React.FC = () => {
 
-  const ContainerHeight = 500;
+  const ContainerHeight = 550;
   const [selectedPatient, setSelectedPatient] = useState<UserItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [searchText, setsearchText] = useState('');
   const [patients, setPatients] = useState<UserItem[]>([]);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const { TabPane } = Tabs;
+  const isSmallScreen = window.innerHeight < 700;
+  const { token: { colorBgContainer }, } = theme.useToken();
+  const { Text } = Typography;
 
-
-
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof UserItem) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof UserItem, _id: string) => {
     setSelectedPatient((prevState) => ({
       ...(prevState as UserItem),
+      _id: _id,
       [field]: event.target.value,
+
     }));
+
+
   };
   // <Input className='input-item' value={selectedPatient.nameEmergencyContact} onChange={(e) => handleInputChange(e, 'nameEmergencyContact')} />
   const auth = useAuth();
@@ -86,6 +92,7 @@ const Patients: React.FC = () => {
 
   const openModal = (patient: UserItem) => {
     setSelectedPatient(patient);
+    setSelectedPatientId(patient._id);
     setModalVisible(true)
   }
 
@@ -113,6 +120,8 @@ const Patients: React.FC = () => {
 
 
 
+
+
   const formattedDateOfBirth = selectedPatient?.dateBirth ? new Date(selectedPatient.dateBirth).toLocaleDateString('pt-BR') : '';
 
 
@@ -120,36 +129,37 @@ const Patients: React.FC = () => {
     <div>
       <div>
         <div>
-          <Row gutter={10}>
-            <Col></Col>
-            <Col span={22}>
-            <Tooltip title= "Digite o nome do paciente">
-              <Input
-                style={{ borderColor: 'blue' }}
-                placeholder="Digite o nome do paciente"
-                value={searchText}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-              </Tooltip>
-            </Col>
-            <Col span={1}>
-              <Tooltip title= "Adicionar Usuário">
-              <Button icon={<UserAddOutlined style={{ fontSize: '20px' }} />} style={{borderColor: 'blue' }} onClick={handleOpenModal}></Button>
-              </Tooltip>
-            </Col>
-          </Row>
+          <Header style={{marginBottom: '2%', background: colorBgContainer }}>
+            <Row gutter={16} style={{display: 'flex', alignItems:'center'}}>
+              <Col span={8}>
+                <Text style={{ marginLeft: '-3%', fontSize: '35px' }}> Pacientes</Text>
+              </Col>
+              <Col span={8}>
+                <Tooltip title="Digite o nome do paciente">
+                  <Input
 
+                    style={{ borderColor: '#5eb0f8', borderRadius: "20px" }}
+                    placeholder="Buscar"
+                    value={searchText}
+                    onChange={(e) => handleSearch(e.target.value)}
 
+                  />
+                </Tooltip>
+              </Col>
+              <Col span={2} style={{ marginLeft: '20%' }}>
+                <Tooltip title="Adicionar Usuário">
+                  <Button icon={<UserAddOutlined style={{ fontSize: '20px' }} />} style={{ borderColor: '#5eb0f8' }} onClick={handleOpenModal}> Adicionar Pacientes</Button>
+                </Tooltip>
+              </Col>
+            </Row>
 
+          </Header>
         </div>
         {showModal && <RegisterPatients closeModal={handleCloseModal} />}
-
-
-
       </div>
       <List>
         <VirtualList
-          height={ContainerHeight}
+          height={isSmallScreen ? 400 : ContainerHeight}
           className="content"
           data={filteredData.length > 0 ? filteredData : patients}
           itemHeight={47}
@@ -173,7 +183,7 @@ const Patients: React.FC = () => {
           )}
         </VirtualList>
       </List>
-      <Modal
+      <Modal style={{ marginTop: '-6%' }}
         //style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         visible={modalVisible}
         onCancel={closeModals}
@@ -194,7 +204,7 @@ const Patients: React.FC = () => {
         {selectedPatient && (
 
           <>
-            <Tabs style={{ alignItems: 'center' }} defaultActiveKey="1" >
+            <Tabs defaultActiveKey="1" >
               <TabPane tab="Informações Pessoais" key="1" className="custom-tabs">
                 <Form style={{ display: 'flex' }} className='item-form'>
                   <Row gutter={[16, 0]}>
@@ -293,7 +303,7 @@ const Patients: React.FC = () => {
                       <Form className='item-form'>
                         <Col span={24}>
                           <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
-                            <Input.TextArea id='inputDemandaInicial' className='input-item' value={selectedPatient.initialDemand} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'initialDemand')} rows={10} />
+                            <Input.TextArea id='inputDemandaInicial' className='input-item' value={selectedPatient.initialDemand} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'initialDemand', selectedPatient._id)} rows={10} />
                           </Form.Item>
                         </Col>
                       </Form>
@@ -302,7 +312,7 @@ const Patients: React.FC = () => {
                       <Form className='item-form'>
                         <div className="form-row">
                           <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
-                            <Input.TextArea id='inputObjetivoTratamento' className='input-item' value={selectedPatient.purposeTreatment} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'purposeTreatment')} rows={10} />
+                            <Input.TextArea id='inputObjetivoTratamento' className='input-item' value={selectedPatient.purposeTreatment} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'purposeTreatment', selectedPatient._id)} rows={10} />
                           </Form.Item>
                         </div>
                       </Form>
@@ -311,7 +321,7 @@ const Patients: React.FC = () => {
                       <Form className='item-form'>
                         <div className="form-row">
                           <Form.Item className='item-label' label="" style={{ marginRight: '10px' }}>
-                            <Input.TextArea id='inputEvolucaoPaciente' className='input-item' value={selectedPatient.patientEvolution} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'patientEvolution')} rows={10} />
+                            <Input.TextArea id='inputEvolucaoPaciente' className='input-item' value={selectedPatient.patientEvolution} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'patientEvolution', selectedPatient._id)} rows={10} />
                           </Form.Item>
                         </div>
                       </Form>
@@ -320,7 +330,7 @@ const Patients: React.FC = () => {
                       <Form className='item-form'>
                         <div className="form-row">
                           <Form.Item className='item-label' style={{ marginRight: '10px' }}>
-                            <Input.TextArea id='inputAnotacaoGerais' className='input-item' value={selectedPatient.generalNotes} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'generalNotes')} rows={10} />
+                            <Input.TextArea id='inputAnotacaoGerais' className='input-item' value={selectedPatient.generalNotes} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e, 'generalNotes', selectedPatient._id)} rows={10} />
                           </Form.Item>
                         </div>
                       </Form>
@@ -350,10 +360,17 @@ const Patients: React.FC = () => {
                         <Input id='inputCelularEmergencia' value={selectedPatient.emergencyContact} />
                       </Form.Item>
                     </Col>
-
-
-
                   </Row>
+                </Form>
+
+              </TabPane>
+
+              <TabPane id='agendaDoPaciente' tab="Proximas Consultas" key="4">
+                <Form >
+                  {selectedPatientId && (
+                    <PatientCalendar patientId={selectedPatientId} />
+                  )}
+
                 </Form>
 
               </TabPane>

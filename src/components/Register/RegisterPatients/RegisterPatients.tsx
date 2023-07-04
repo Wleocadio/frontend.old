@@ -13,7 +13,7 @@ interface Props {
 }
 
 interface UserItem {
-    
+
     professionalId: string;
     name: string;
     cpf: string;
@@ -102,19 +102,14 @@ const RegisterPatients: React.FC<Props> = ({ closeModal }) => {
 
             }
             console.log(patientData, token)
-
             createPatients(patientData, token)
-                .then(() => {
-                    setShowCreateResult(true)
-                })
         }
-        form.resetFields()
         closeModal();
     };
 
     const closeCreateMessage = () => {
         setShowCreateResult(false)
-        history.push('/schedule');
+        history.push('/patints');
         window.location.reload()
     }
 
@@ -184,7 +179,7 @@ const RegisterPatients: React.FC<Props> = ({ closeModal }) => {
                                 rules={[{ required: true, message: 'Por favor, insira o Nascimento' }]}
                             >
 
-                                <DatePicker defaultValue={dayjs('10/10/1900',dateFormatList[0])} format={dateFormatList} />
+                                <DatePicker defaultValue={dayjs('10/10/1900', dateFormatList[0])} format={dateFormatList} />
                             </Form.Item>
                         </Col>
                         <Col span={4} className="marginTop">
@@ -403,9 +398,9 @@ const RegisterPatients: React.FC<Props> = ({ closeModal }) => {
             >
                 <Result
                     status="success"
-                    title="Agendamento realizado com Sucesso!"
+                    title="Paciente cadastrado com Sucesso!"
                     extra={[
-                        <Button id='btnOkDeleteMessage' type="primary" key="ok" onClick={closeCreateMessage}>
+                        <Button id='btnOkMessagePatient' type="primary" key="ok" onClick={closeCreateMessage}>
                             OK
                         </Button>
                     ]}

@@ -88,6 +88,23 @@ export const fetchSchedules = async (token: string, id:string) => {
     }
 }
 
+export const fetchPatientSchedules = async (token: string, id:string) => {
+    try {
+        
+        const response = await Api.get(`/schedules/patientSchedule/${id}`, {
+            headers: {
+                Authorization: token
+            }
+        });
+        return response.data;
+
+    } catch (error) {
+        
+        console.error('Erro ao buscar agenda', error)
+        throw error;
+    }
+}
+
 export const fetchPatientName = async (token: string, id:string) => {
     try {
         

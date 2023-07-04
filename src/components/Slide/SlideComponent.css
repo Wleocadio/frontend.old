@@ -1,0 +1,26 @@
+.slide-content {
+    display: flex;
+    margin-top: 10%;
+    margin: 5%;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Define a altura do slide */
+
+  }
+ 
+  
+  .slide-content img {
+    max-width: 90%; /* Define a largura máxima da imagem */
+    max-height: 90%; /* Define a altura máxima da imagem */
+    object-fit: cover; /* Ajusta o tamanho da imagem para cobrir o conteúdo */
+  }
+
+  /* Seletor para os pontos do Carousel */
+.slick-dots li button {
+    background-color: black;
+  }
+  
+  /* Seletor para o ponto ativo do Carousel */
+  .slick-dots li.slick-active button {
+    background-color: black;
+  }

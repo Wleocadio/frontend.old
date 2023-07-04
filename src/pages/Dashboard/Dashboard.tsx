@@ -97,20 +97,7 @@ export const Dashboard: React.FC = () => {
         </Menu>
       </Sider>
       <Layout>
-        <Header style={{ display: 'flex', padding: 0, background: colorBgContainer }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-
-              fontSize: '10px',
-              width: 64,
-              height: 64,
-            }}
-          />
-          
-        </Header>
+      
         <Content
           style={{
             margin: '24px 16px',

@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import CalendarPage from './pages/Schedule/CalendarPage'
 import  Layout from './pages/Layout/Layout'
 import Patients from './Forms/PatientForm/Patients'
+import LayoutPrincipal from './pages/Layout/Layout'
 
 
 function App() {
@@ -43,12 +44,12 @@ function App() {
           </Route>
           <Route path="/schedule">
             <ProtectedLayout>
-            <Layout content={<CalendarPage/>}/>
+            <LayoutPrincipal content={<CalendarPage/>}/>
             </ProtectedLayout>
           </Route>
           <Route path="/patients">
             <ProtectedLayout>
-            <Layout content={<Patients/>}/>
+            <LayoutPrincipal content={<Patients/>}/>
             </ProtectedLayout>
           </Route>
 
