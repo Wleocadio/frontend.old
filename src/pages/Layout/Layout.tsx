@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
 import './Layout.css'
-import Patients from '../../Forms/PatientForm/Patients'
+import Patients from '../Patients/Patients'
 import { CalendarOutlined, DollarOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined, UserOutlined, } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Avatar, Typography } from 'antd';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import { logoutUser } from '../../components/ProtectedLayout/Logout/logout'
 import CalendarPage from '../Schedule/CalendarPage';
 import { useHistory, useLocation } from 'react-router-dom';
-
-
+import { Buffer } from 'buffer';
 const { Header, Sider, Content } = Layout;
 
 
 
-const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({}) => {
+const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   const location = useLocation();
   const history = useHistory()
-
   const [collapsed, setCollapsed] = useState(false);
   const { token: { colorBgContainer }, } = theme.useToken();
   const auth = useAuth();
   const logout = logoutUser()
   const [activePage, setActivePage] = useState<string>('');
+  const photo = auth.image || '';
+  const base64String = Buffer.from(photo).toString('base64');
+  const imageUrl = `data:image/jpeg;base64,${base64String}`;
 
-  //const activePage = location.pathname === '/schedule' ? 'patientSchedule' : '';
+  
   const handleMenuClick = (page: string) => {
     if (page == activePage) {
       window.location.reload()
@@ -34,8 +35,8 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({}) => {
   };
 
 
-
   const renderContent = () => {
+
     if (activePage === 'patientList') {
       history.push('/patients')
       return <Patients />;
@@ -60,8 +61,9 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({}) => {
 
 
 
+
   return (
-    <Layout>
+    <Layout >
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
 
@@ -72,10 +74,16 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({}) => {
           selectedKeys={[activePage]}
           onClick={({ key }) => handleMenuClick(key as string)}
         >
-         
-        
-          <div>
-            <Avatar className="avatar" icon={<UserOutlined style={{ fontSize: '32px' }} />} />
+
+
+          <div className="avatar-container">
+           <Avatar
+              className="custom-avatar"
+              src={imageUrl}
+              alt="Foto de Perfil"
+              size={100}
+              shape="circle"
+            />
           </div>
 
           <div className="user-info">
@@ -97,10 +105,11 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({}) => {
           <Menu.Item key="5" icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
             Logout
           </Menu.Item>
+
         </Menu>
       </Sider>
       <Layout>
-           <Content
+        <Content
           style={{
             margin: '24px 16px',
             padding: 24,
@@ -108,6 +117,8 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({}) => {
             background: colorBgContainer,
           }}
         >
+
+
           {renderContent()}
         </Content>
       </Layout>

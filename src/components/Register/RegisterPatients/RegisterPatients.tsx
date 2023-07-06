@@ -276,7 +276,7 @@ const RegisterPatients: React.FC<Props> = ({ closeModal }) => {
                                 <Input id="inputCEP" ></Input>
                             </Form.Item>
                         </Col>
-                        <Col span={6} className="marginTop">
+                        <Col span={3} className="marginTop">
                             <label>Estado</label>
                             <Form.Item name="estado"
                                 rules={[{ required: true, message: 'Por favor, insira o Estado' }]}
@@ -285,41 +285,41 @@ const RegisterPatients: React.FC<Props> = ({ closeModal }) => {
                                 <Select
                                     id="inputEstado"
                                     defaultValue=""
-                                    style={{ width: 170 }}
+                                    style={{ width: 70 }}
                                     //onChange={handleChange}
                                     options={[
-                                        { value: 'AC', label: 'Acre' },
-                                        { value: 'AL', label: 'Alagoas' },
-                                        { value: 'AP', label: 'Amapá' },
-                                        { value: 'AM', label: 'Amazonas' },
-                                        { value: 'BA', label: 'Bahia' },
-                                        { value: 'CE', label: 'Ceará' },
-                                        { value: 'DF', label: 'Distrito Federal' },
-                                        { value: 'ES', label: 'Espírito Santo' },
-                                        { value: 'GO', label: 'Goiás' },
-                                        { value: 'MA', label: 'Maranhão' },
-                                        { value: 'MT', label: 'Mato Grosso' },
-                                        { value: 'MS', label: 'Mato Grosso do Sul' },
-                                        { value: 'MG', label: 'Minas Gerais' },
-                                        { value: 'PA', label: 'Pará' },
-                                        { value: 'PB', label: 'Paraíba' },
-                                        { value: 'PR', label: 'Paraná' },
-                                        { value: 'PE', label: 'Pernambuco' },
-                                        { value: 'PI', label: 'Piauí' },
-                                        { value: 'RJ', label: 'Rio de Janeiro' },
-                                        { value: 'RN', label: 'Rio Grande do Norte' },
-                                        { value: 'RS', label: 'Rio Grande do Sul' },
-                                        { value: 'RO', label: 'Rondônia' },
-                                        { value: 'RR', label: 'Roraima' },
-                                        { value: 'SC', label: 'Santa Catarina' },
-                                        { value: 'SP', label: 'São Paulo' },
-                                        { value: 'SE', label: 'Sergipe' },
-                                        { value: 'TO', label: 'Tocantins' },
+                                        { value: 'AC', label: 'AC' },
+                                        { value: 'AL', label: 'AL' },
+                                        { value: 'AP', label: 'AP' },
+                                        { value: 'AM', label: 'AM' },
+                                        { value: 'BA', label: 'BA' },
+                                        { value: 'CE', label: 'CE' },
+                                        { value: 'DF', label: 'DF' },
+                                        { value: 'ES', label: 'ES' },
+                                        { value: 'GO', label: 'GO' },
+                                        { value: 'MA', label: 'MA' },
+                                        { value: 'MT', label: 'MT' },
+                                        { value: 'MS', label: 'MS' },
+                                        { value: 'MG', label: 'MG' },
+                                        { value: 'PA', label: 'PA' },
+                                        { value: 'PB', label: 'PB' },
+                                        { value: 'PR', label: 'PR' },
+                                        { value: 'PE', label: 'PE' },
+                                        { value: 'PI', label: 'PI' },
+                                        { value: 'RJ', label: 'RJ' },
+                                        { value: 'RN', label: 'RN' },
+                                        { value: 'RS', label: 'RS' },
+                                        { value: 'RO', label: 'RO' },
+                                        { value: 'RR', label: 'RR' },
+                                        { value: 'SC', label: 'SC' },
+                                        { value: 'SP', label: 'SP' },
+                                        { value: 'SE', label: 'SE' },
+                                        { value: 'TO', label: 'TO' },
                                     ]}
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6} className="marginTop">
+                        <Col span={7} className="marginTop">
                             <label>Cidade</label>
                             <Form.Item name="cidade"
                                 rules={[{ required: true, message: 'Por favor, insira o Cidade' }]}
@@ -328,7 +328,7 @@ const RegisterPatients: React.FC<Props> = ({ closeModal }) => {
                                 <Input id="inputCidade" ></Input>
                             </Form.Item>
                         </Col>
-                        <Col span={5} className="marginTop">
+                        <Col span={7} className="marginTop">
                             <label>Bairro</label>
                             <Form.Item name="bairro"
                                 rules={[{ required: true, message: 'Por favor, insira o Bairro!' }]}

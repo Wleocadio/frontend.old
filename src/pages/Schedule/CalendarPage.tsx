@@ -67,8 +67,6 @@ const CalendarPage: React.FC = () => {
     const fetchShowPatients = async () => {
       try {
         const token = auth.token || '';
-
-
         const patientData = await fetchPatients(token, id);
 
         setPatients(patientData);
@@ -196,8 +194,7 @@ const CalendarPage: React.FC = () => {
   const handleDeleteSchedule = () => {
     if (selectedEvent) {
       const { _id } = selectedEvent;
-      console.log(token, _id)
-      deleteSchedule(token, _id)
+       deleteSchedule(token, _id)
 
         .then(() => {
           closeModal();
@@ -238,7 +235,6 @@ const CalendarPage: React.FC = () => {
     const serviceValue = form.getFieldValue('serviceValue');
     const duration = form.getFieldValue('duration');
     const notes = form.getFieldValue('notes');
-    //console.log(selectedDate, selectedTime, serviceValue, duration, notes, selectedPatientId, token)
     if (selectedDate && selectedTime && selectedPatientId) {
 
       const formattedDate = selectedDate ? selectedDate.format('YYYY-MM-DD') : '';
@@ -254,9 +250,7 @@ const CalendarPage: React.FC = () => {
         patientId: selectedPatientId
       };
 
-      console.log(scheduleData, token);
-
-      createSchedule(scheduleData, token)
+     createSchedule(scheduleData, token)
         .then(() => {
           setShowCreateResult(true)
         })

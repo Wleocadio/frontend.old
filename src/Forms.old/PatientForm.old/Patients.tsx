@@ -126,7 +126,7 @@ const Patients: React.FC = () => {
 
 
   return (
-    <div>
+    <div className='teste'>
       <div>
         <div>
           <Header style={{marginBottom: '2%', background: colorBgContainer }}>

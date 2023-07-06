@@ -1,8 +1,11 @@
+import { Buffer } from 'buffer';
+
 export interface IUser{
     mail?: string;
     token?: string;
     user?:string;
-    id?:number
+    id?:number;
+    image?:Buffer
 }
 
 export interface IContext extends IUser{
