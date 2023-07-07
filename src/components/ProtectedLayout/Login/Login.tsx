@@ -5,7 +5,9 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import './login.css'
 import { useState } from "react";
 import LayoutComponent from "../../../pages/Layout/LayoutSlide";
-import { Icon } from "@mui/material";
+import Dashboard from "../../../pages/Dashboard/Dashboard";
+import LayoutPrincipal from "../../../pages/Layout/Layout";
+
 
 export const Login = () => {
     const auth = useAuth(); // Obtém o objeto de autenticação do contexto
@@ -18,6 +20,7 @@ export const Login = () => {
     const savedUser = localStorage.getItem("ue"); // Obtém o valor armazenado no localStorage com a chave "ue"
     const savedPass = localStorage.getItem("up");// Obtém o valor armazenado no localStorage com a chave "up"
     const [isChecked, setIsChecked] = useState(true); // Estado para armazenar o valor do checkbox "Lembrar-me"
+    const [loggedIn, setLoggedIn] = useState(false);
 
     async function onFinish(values: { email: string, password: string, remember: boolean }) {
         const { email, password} = values
@@ -32,11 +35,17 @@ export const Login = () => {
 
             await auth.authenticate(values.email, values.password) // Chama a função de autenticação fornecida pelo objeto auth
 
-            history.push('/Dashboard'); // Redireciona o usuário para a página "/Dashboard"
-            window.location.reload(); // Recarrega a página
+           // history.push('/Dashboard'); // Redireciona o usuário para a página "/Dashboard"
+            setLoggedIn(true);
+           // window.location.reload(); // Recarrega a página
         } catch (error) {
             message.error("Credenciais de login inválidas. Por favor, verifique seu email e senha."); // Exibe uma mensagem de erro
         }
+    }
+
+    if (loggedIn) {
+        history.push('/');
+        return <LayoutPrincipal content={<Dashboard/>}/>
     }
 
     const validateEmail = (_: any, value: string) => {
@@ -179,7 +188,6 @@ export const Login = () => {
                 </Col>
 
             </Row>
-
         </LayoutComponent>
     );
 

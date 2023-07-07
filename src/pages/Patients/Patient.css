@@ -165,3 +165,35 @@ div.ant-modal {
   display: flex;
   justify-content: center;
 }
+
+.list-item:hover {
+  background-color: #5eb0f8;
+  color: #fff;
+}
+
+.patient-list {
+  border: 1px solid #5eb0f8;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.class-list-item {
+  border: 2px solid #5eb0f8;
+  border-radius: 20px;
+  margin-bottom: 1%;
+  align-items: center;
+}
+
+.actions-button {
+  display: flex;
+  background-color: transparent;
+  border: none;
+  color: #1c00bd;
+  cursor: pointer;
+  align-items: center;
+  
+}
+
+.white-placeholder::placeholder {
+  color: #08529c;
+}
