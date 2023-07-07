@@ -9,13 +9,10 @@ import ptBrLocale from '@fullcalendar/core/locales/pt-br';
 import moment from 'moment';
 import 'moment-timezone';
 import 'moment/locale/pt-br';
-import Schedule from '../../Forms/ScheduleForm/Schedule';
-import { Button, Col, Form, Input, InputNumber, Modal, Result, Row, Select, Tooltip, theme } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Result, Row, Select, theme } from 'antd';
 import { useHistory } from 'react-router-dom';
 import MiniCalendar from '../../components/Calendar/MiniCalendar';
 import { Dayjs } from 'dayjs';
-import { Header } from 'antd/es/layout/layout';
-import { UserAddOutlined } from '@ant-design/icons';
 
 
 
@@ -67,8 +64,6 @@ const CalendarPage: React.FC = () => {
     const fetchShowPatients = async () => {
       try {
         const token = auth.token || '';
-
-
         const patientData = await fetchPatients(token, id);
 
         setPatients(patientData);
@@ -90,11 +85,13 @@ const CalendarPage: React.FC = () => {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
         timeZone: 'America/Sao_Paulo',
         locale: ptBrLocale,
-
+        
+        
         headerToolbar: {
           start: 'dayGridMonth,timeGridWeek,timeGridDay',
           center: 'title',
           end: 'prevYear,prev,next,nextYear',
+          
 
         },
         events: schedules.map((schedule) => ({
@@ -150,10 +147,10 @@ const CalendarPage: React.FC = () => {
           calendar.setOption('height', '200px');
         } else if (width >= 768 && width < 1024) {
           calendar.setOption('contentHeight', '400px');
-          calendar.setOption('height', '400px');
+          calendar.setOption('height', '40px');
         } else if (width >= 1025 && width < 1367) {
-          calendar.setOption('contentHeight', '450px');
-          calendar.setOption('height', '450px');
+          calendar.setOption('contentHeight', '510px');
+          calendar.setOption('height', '510px');
         } else {
           calendar.setOption('contentHeight', '580px');
           calendar.setOption('height', '580px');
@@ -196,8 +193,7 @@ const CalendarPage: React.FC = () => {
   const handleDeleteSchedule = () => {
     if (selectedEvent) {
       const { _id } = selectedEvent;
-      console.log(token, _id)
-      deleteSchedule(token, _id)
+       deleteSchedule(token, _id)
 
         .then(() => {
           closeModal();
@@ -238,7 +234,6 @@ const CalendarPage: React.FC = () => {
     const serviceValue = form.getFieldValue('serviceValue');
     const duration = form.getFieldValue('duration');
     const notes = form.getFieldValue('notes');
-    //console.log(selectedDate, selectedTime, serviceValue, duration, notes, selectedPatientId, token)
     if (selectedDate && selectedTime && selectedPatientId) {
 
       const formattedDate = selectedDate ? selectedDate.format('YYYY-MM-DD') : '';
@@ -254,9 +249,7 @@ const CalendarPage: React.FC = () => {
         patientId: selectedPatientId
       };
 
-      console.log(scheduleData, token);
-
-      createSchedule(scheduleData, token)
+     createSchedule(scheduleData, token)
         .then(() => {
           setShowCreateResult(true)
         })

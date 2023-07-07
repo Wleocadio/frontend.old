@@ -16,25 +16,26 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
             setUser(user);
         }
     }, []);
-    
+
     async function authenticate(mail: string, password: string) {
         const response = await LoginRequest(mail, password)
-               
-        const payload = { token: response.token, user:response.userName, mail, id:response.id }
+
+        const payload = { token: response.token, user: response.userName, image: response.image, mail, id: response.id }
+        console.log(payload)
         setUser(payload);
         setUserLocalStorage(payload)
     }
 
 
     async function logout() {
-        
+
         setUser(null)
         setUserLocalStorage(null)
         const history = useHistory();
         history.push('/login');
     }
 
-    return (       
+    return (
         <AuthContext.Provider value={{ ...user, authenticate, logout }}>
             {children}
         </AuthContext.Provider>

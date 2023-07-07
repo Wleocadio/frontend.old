@@ -26,28 +26,33 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ onDateSelect }) => {
         setSelectedTime(time);
     };
 
-   
+
     const disabledDate = (current: Dayjs | null) => {
         return current ? current.isBefore(days(), 'day') : false;
-      };
+    };
 
-    
+
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <label htmlFor="name">Selecione Data e Hora</label>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <DatePicker value={selectedDate} onChange={handleDateSelect} disabledDate={disabledDate} />
+                <DatePicker
+                    value={selectedDate}
+                    style={{ width: 130 }}
+                    onChange={handleDateSelect}
+                    disabledDate={disabledDate} />
 
-            <TimePicker
-                format="HH:mm"
-                minuteStep={15}
-                disabled={!selectedDate}
-                value={selectedTime}
-                onChange={handleTimeSelect}
-                
-            />
-        </div>
+                <TimePicker
+                    format="HH:mm"
+                    minuteStep={15}
+                    style={{ width: 90 }}
+                    disabled={!selectedDate}
+                    value={selectedTime}
+                    onChange={handleTimeSelect}
+
+                />
+            </div>
         </div>
 
     );

@@ -44,7 +44,7 @@ export const fetchPatients = async (token: string, id: string) => {
             }
         })
 
-        console.log(response.data)
+       // console.log(response.data)
         return response.data;
 
     } catch (error) {
@@ -62,7 +62,7 @@ export const getPatients = async (token: string) => {
             }
         })
 
-        console.log(response.data)
+        //console.log(response.data)
         return response.data;
 
     } catch (error) {
@@ -170,7 +170,7 @@ export const createPatients = async (patientData: any, token: string) => {
                 Authorization: token
             },
         })
-        console.log(response.data)
+       // console.log(response.data)
         const responseData = response.data
                 
             if (response.status = 201){

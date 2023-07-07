@@ -1,13 +1,15 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import './Patient.css'
-import { Layout, Avatar, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip, theme, Typography } from 'antd';
+import { Layout, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip, theme, Typography, Menu, Dropdown } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import { fetchPatients } from '../../context/AuthProvider/util';
 import { useAuth } from '../../context/AuthProvider/useAuth';
-import { SearchOutlined, UserAddOutlined } from '@ant-design/icons';
+import { EllipsisOutlined, MoreOutlined, UserAddOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import RegisterPatients from '../../components/Register/RegisterPatients/RegisterPatients';
 import PatientCalendar from '../../components/Calendar/PatientCalendar';
+import { textAlign } from '@mui/system';
+
 
 const { Header } = Layout;
 
@@ -42,7 +44,7 @@ interface UserItem {
 
 const Patients: React.FC = () => {
 
-  const ContainerHeight = 550;
+  const ContainerHeight = 520;
   const [selectedPatient, setSelectedPatient] = useState<UserItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -50,7 +52,7 @@ const Patients: React.FC = () => {
   const [patients, setPatients] = useState<UserItem[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const { TabPane } = Tabs;
-  const isSmallScreen = window.innerHeight < 700;
+  const isSmallScreen = window.innerHeight < 770;
   const { token: { colorBgContainer }, } = theme.useToken();
   const { Text } = Typography;
 
@@ -120,69 +122,125 @@ const Patients: React.FC = () => {
 
 
 
-
-
   const formattedDateOfBirth = selectedPatient?.dateBirth ? new Date(selectedPatient.dateBirth).toLocaleDateString('pt-BR') : '';
 
 
   return (
-    <div>
+    <div className='teste'>
       <div>
         <div>
-          <Header style={{marginBottom: '2%', background: colorBgContainer }}>
-            <Row gutter={16} style={{display: 'flex', alignItems:'center'}}>
-              <Col span={8}>
-                <Text style={{ marginLeft: '-3%', fontSize: '35px' }}> Pacientes</Text>
-              </Col>
-              <Col span={8}>
-                <Tooltip title="Digite o nome do paciente">
-                  <Input
+          <Header style={{ display: 'flex', justifyContent:'space-between', marginBottom: '2%', background: colorBgContainer }}>
+         
+              <Col span={24} style={{display:'flex',justifyContent:'center', alignItems:'center'}}>
+                <Col span={8}>
+                  <Text style={{fontSize: '35px' }}> Pacientes</Text>
+                </Col>
+                <Col span={8}>
+                  <Tooltip title="Digite o nome do paciente">
+                    <Input
 
-                    style={{ borderColor: '#5eb0f8', borderRadius: "20px" }}
-                    placeholder="Buscar"
-                    value={searchText}
-                    onChange={(e) => handleSearch(e.target.value)}
+                      style={{ backgroundColor: '#b6d3f0', borderRadius: "20px" }}
+                      placeholder="Buscar"
+                      className="white-placeholder"
+                      value={searchText}
+                      onChange={(e) => handleSearch(e.target.value)}
 
-                  />
-                </Tooltip>
+                    />
+                  </Tooltip>
+                </Col>
+                <Col span={8} style={{ display: 'flex', justifyContent:'right'}}>
+                  <Tooltip title="Adicionar Usuário">
+                    <Button icon={<UserAddOutlined style={{ fontSize: '20px' }} />} style={{ display: 'flex', backgroundColor: '#23a6f0', alignItems: 'center', color: 'white', }} onClick={handleOpenModal}> Adicionar Pacientes</Button>
+                  </Tooltip>
+                </Col>
               </Col>
-              <Col span={2} style={{ marginLeft: '20%' }}>
-                <Tooltip title="Adicionar Usuário">
-                  <Button icon={<UserAddOutlined style={{ fontSize: '20px' }} />} style={{ borderColor: '#5eb0f8' }} onClick={handleOpenModal}> Adicionar Pacientes</Button>
-                </Tooltip>
-              </Col>
-            </Row>
+
+   
 
           </Header>
         </div>
         {showModal && <RegisterPatients closeModal={handleCloseModal} />}
       </div>
-      <List>
+
+      <List size="large">
+        <List.Item
+          style={{ borderBottom: 'none' }}
+        >
+          <Col span={23} style={{ display: 'flex' }}>
+
+            <Col span={6} style={{ display: 'flex', marginLeft: '9%' }}>
+              <strong>Nome</strong>
+            </Col>
+            <Col span={6} style={{ display: 'flex' }}>
+              <strong>Email</strong>
+            </Col>
+            <Col span={6} style={{ display: 'flex' }}>
+              <strong>Telefone</strong>
+            </Col>
+            <Col span={6} style={{ display: 'flex', marginLeft: '-3%' }}>
+              <strong>Data de Nascimento</strong>
+            </Col>
+          </Col>
+        </List.Item>
+
         <VirtualList
           height={isSmallScreen ? 400 : ContainerHeight}
-          className="content"
           data={filteredData.length > 0 ? filteredData : patients}
-          itemHeight={47}
+          itemHeight={80}
           itemKey="_id"
+
         >
           {(response: UserItem) => (
-            <List.Item key={response._id}>
-              <List.Item.Meta
-                avatar={<Avatar src={response.image} />}
-                title={<a onClick={() => openModal(response)}>{response.name}</a>}
-                description={[
-                  "Nascimento: " + moment(response.dateBirth).format('DD/MM/YYYY') + " | ",
-                  "Email: " + response.mail + " | ",
-                  "Telefone: " + response.phone + " | ",
-                  "Contato de Emergencia: " + response.emergencyContact
-                ]}
+            <List.Item
+              key={response._id}
+              style={{ borderBottom: 'none', marginBottom: '-10px' }}
 
-              />
+            >
+              <Col span={23} style={{
+                display: 'flex',
+                justifyContent: 'right',
+                borderRadius: '20px',
+                borderColor: '#5eb0f8',
+                borderStyle: 'solid',
+                borderWidth: '1px 1px 1px 1px',
+                height: '40px',
+                alignItems: 'center'
 
+              }}>
+                <Col span={6} >
+
+                  {response.name}
+                </Col>
+                <Col span={6} >
+
+                  {response.mail}
+                </Col>
+                <Col span={6} >
+
+                  {response.phone}
+                </Col>
+                <Col span={3} >
+                  {moment(response.dateBirth).format("DD/MM/YYYY")}
+
+                </Col>
+
+                <Col span={1}>
+
+                  <Button
+                    shape="circle"
+                    icon={<MoreOutlined style={{ fontSize: '30px' }} />}
+                    size="small"
+                    className="actions-button"
+                    onClick={() => openModal(response)}
+                  />
+
+                </Col>
+              </Col>
             </List.Item>
           )}
         </VirtualList>
       </List>
+
       <Modal style={{ marginTop: '-6%' }}
         //style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
         visible={modalVisible}

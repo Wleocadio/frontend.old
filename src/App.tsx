@@ -9,7 +9,7 @@ import { ResetPassword } from './pages/ResetPassword/ResetPassword'
 import { useEffect } from 'react'
 import CalendarPage from './pages/Schedule/CalendarPage'
 import  Layout from './pages/Layout/Layout'
-import Patients from './Forms/PatientForm/Patients'
+import Patients from './pages/Patients/Patients'
 import LayoutPrincipal from './pages/Layout/Layout'
 
 
@@ -39,7 +39,7 @@ function App() {
           </Route>
           <Route path="/dashboard">
             <ProtectedLayout>
-            <Dashboard/>
+            <LayoutPrincipal content={<Dashboard/>}/>
             </ProtectedLayout>
           </Route>
           <Route path="/schedule">

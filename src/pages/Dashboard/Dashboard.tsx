@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Dashboard.css'
-import Patients from '../../Forms/PatientForm/Patients'
+import Patients from '../Patients/Patients'
 import { CalendarOutlined, DollarOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined, UserOutlined, } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Avatar, Typography } from 'antd';
 import { useAuth } from '../../context/AuthProvider/useAuth';
