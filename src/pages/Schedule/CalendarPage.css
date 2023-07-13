@@ -51,10 +51,12 @@
   
   /* Adicione outras media queries e estilos responsivos conforme necessário */
 
-  .mini-calendar-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+ 
 
+  .saturday-event {
+    background-color: yellow;
+  }
   
+  .sunday-event {
+    background-color: orange;
+  }

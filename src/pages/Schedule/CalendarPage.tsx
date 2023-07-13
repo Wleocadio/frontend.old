@@ -85,7 +85,7 @@ const CalendarPage: React.FC = () => {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
         timeZone: 'America/Sao_Paulo',
         locale: ptBrLocale,
-        
+
         
         headerToolbar: {
           start: 'dayGridMonth,timeGridWeek,timeGridDay',
@@ -104,7 +104,25 @@ const CalendarPage: React.FC = () => {
 
         })),
         dateClick: function () { setModalOpen(true); },
-
+        //evento do Mouse para mostrar o titulo ao colocar o mouse
+        eventMouseEnter: (info) => {
+          const { schedule } = info.event.extendedProps;
+          const title = `${schedule.patientName} - ${moment(schedule.date).format("DD/MM - HH:mm")}`;
+          info.el.setAttribute("title", title);
+        },
+        eventMouseLeave: (info) => {
+          info.el.removeAttribute("title");
+        },
+        eventClassNames: (arg) => {
+          const eventDate = arg.event.start;
+          if (eventDate) {
+            const isSaturday = eventDate.getDay() === 6; // Verifica se é sábado (0 para domingo, 1 para segunda-feira, etc.)
+            const isSunday = eventDate.getDay() === 0; // Verifica se é domingo
+        
+            return isSaturday ? "saturday-event" : isSunday ? "sunday-event" : "";
+          }
+          return "";
+        },
         eventContent: (arg) => {
           // Obter a hora e os minutos do evento
           const eventTime = moment(arg.event.start).format('HH:mm');
@@ -130,6 +148,7 @@ const CalendarPage: React.FC = () => {
 
           return { domNodes: [content] };
         },
+        
       });
 
       calendar.render();

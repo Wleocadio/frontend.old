@@ -54,7 +54,7 @@
 .class-logo {
   width: 200px;
   height: 200px;
-  font-size: 50px; /* Aumente ou diminua o tamanho do ícone do Avatar alterando o valor do font-size */
+  font-size: 90px; /* Aumente ou diminua o tamanho do ícone do Avatar alterando o valor do font-size */
 }
 
 .user-info {
