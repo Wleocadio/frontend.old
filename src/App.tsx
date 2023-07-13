@@ -8,9 +8,9 @@ import { Dashboard } from './pages/Dashboard/Dashboard'
 import { ResetPassword } from './pages/ResetPassword/ResetPassword'
 import { useEffect } from 'react'
 import CalendarPage from './pages/Schedule/CalendarPage'
-import  Layout from './pages/Layout/Layout'
 import Patients from './pages/Patients/Patients'
 import LayoutPrincipal from './pages/Layout/Layout'
+import Consults from './pages/Consults/Consults'
 
 
 function App() {
@@ -52,7 +52,11 @@ function App() {
             <LayoutPrincipal content={<Patients/>}/>
             </ProtectedLayout>
           </Route>
-
+          <Route path="/consults">
+            <ProtectedLayout>
+            <LayoutPrincipal content={<Consults/>}/>
+            </ProtectedLayout>
+          </Route>
           <Route path='/login'>
             <Login/>
           </Route>

@@ -162,6 +162,41 @@ export const createSchedule = async (scheduleData: any, token: string) => {
     }
 }
 
+export const updateSchedule = async (scheduleData: any, token: string, id:string) => {
+    try {
+       console.log(scheduleData)
+        const response = await Api.put(`/schedules/${id}`, scheduleData, {
+            headers: {
+                Authorization: token
+            },
+        })
+        const responseData = response.data
+                
+            if (response.status = 201){
+                console.log("Consulta atualizada com sucesso")
+
+            } else {
+                console.log("Erro ao atualizar consulta")
+            }
+
+        return responseData
+
+    } catch (error) {
+        console.error('Ocorreu algum erro na atualização da consulta', error)
+        throw error;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 export const createPatients = async (patientData: any, token: string) => {
     try {
       

@@ -8,7 +8,6 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import moment from 'moment';
 import 'moment-timezone';
 import 'moment/locale/pt-br';
-import Schedule from '../../Forms/ScheduleForm/Schedule';
 import { Button, Col, Form, Input, InputNumber, Modal, Result, Row, Select } from 'antd';
 import MiniCalendar from '../../components/Calendar/MiniCalendar';
 import { Dayjs } from 'dayjs';
@@ -291,7 +290,7 @@ const PatientCalendar: React.FC<PatientCalendarProps> = ({ patientId }) => {
               )}
               <Modal
                 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                visible={modalOpen}
+                visible={false}//mudar para modalOpen se ao clicar puder agendar por ai mesmo.
                 onCancel={() => setModalOpen(false)}
                 footer={[
                   <Button id='btnSave' key="salvar" type="primary" onClick={handleSave}>

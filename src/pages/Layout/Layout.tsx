@@ -8,6 +8,8 @@ import { logoutUser } from '../../components/ProtectedLayout/Logout/logout';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Buffer } from 'buffer';
 import CalendarPage from '../Schedule/CalendarPage';
+import Consults from '../Consults/Consults';
+import logo from '../../assets/logo.png'
 
 const { Sider, Content } = Layout;
 
@@ -52,6 +54,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
       return <CalendarPage />;
     } else if (activePage === 'patientConsults') {
       history.push('/consults')
+      return <Consults />;
       // Renderizar o componente correspondente para 'patientConsults'
     } else if (activePage === 'myPlan') {
       history.push('/myPlan')
@@ -112,18 +115,19 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
           </Menu.Item>
           
           <div className="class-logo-container">
+           
             <Avatar
               className="class-logo"
-              src={imageUrl}
+              src={logo}
               alt="Foto de Perfil"
-              size={80}
-              shape="circle"
+              size={90}
+              shape="square"
             />
           </div>
 
 
         
-          <Menu.Item key="logout" style={{marginTop:'35%'}}icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
+          <Menu.Item key="logout" style={{marginTop:'30%'}}icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
             Sair
           </Menu.Item>
         </Menu>

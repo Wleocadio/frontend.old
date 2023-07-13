@@ -1,14 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import './Patient.css'
-import { Layout, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip, theme, Typography, Menu, Dropdown } from 'antd';
+import { Layout, Button, Col, Form, Input, List, Modal, Row, Tabs, Tooltip, theme, Typography} from 'antd';
 import VirtualList from 'rc-virtual-list';
 import { fetchPatients } from '../../context/AuthProvider/util';
 import { useAuth } from '../../context/AuthProvider/useAuth';
-import { EllipsisOutlined, MoreOutlined, UserAddOutlined } from '@ant-design/icons';
+import { MoreOutlined, UserAddOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import RegisterPatients from '../../components/Register/RegisterPatients/RegisterPatients';
 import PatientCalendar from '../../components/Calendar/PatientCalendar';
-import { textAlign } from '@mui/system';
 
 
 const { Header } = Layout;
@@ -154,9 +153,6 @@ const Patients: React.FC = () => {
                   </Tooltip>
                 </Col>
               </Col>
-
-   
-
           </Header>
         </div>
         {showModal && <RegisterPatients closeModal={handleCloseModal} />}
@@ -194,7 +190,6 @@ const Patients: React.FC = () => {
             <List.Item
               key={response._id}
               style={{ borderBottom: 'none', marginBottom: '-10px' }}
-
             >
               <Col span={23} style={{
                 display: 'flex',
@@ -205,7 +200,6 @@ const Patients: React.FC = () => {
                 borderWidth: '1px 1px 1px 1px',
                 height: '40px',
                 alignItems: 'center'
-
               }}>
                 <Col span={6} >
 
@@ -223,6 +217,7 @@ const Patients: React.FC = () => {
                   {moment(response.dateBirth).format("DD/MM/YYYY")}
 
                 </Col>
+                
 
                 <Col span={1}>
 
