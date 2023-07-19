@@ -75,3 +75,19 @@
 .invisible {
   display: none;
 }
+
+.custom-avatar-container {
+  margin-left: 50px;
+  cursor: pointer;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  /* Adicione aqui outros estilos, como o tamanho do contêiner, se necessário */
+}
+
+.avatar-hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 3);
+  transition: box-shadow 0.3s ease;
+
+}
+
