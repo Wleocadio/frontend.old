@@ -52,6 +52,22 @@ export const fetchPatients = async (token: string, id: string) => {
         throw error;
     }
 }
+export const getProfessionalId = async (token: string, id: string) =>{
+    try {
+        const response = await Api.get(`/professional/${id}`, {
+            headers:{
+                Authorization: token
+            }
+        })
+        return response.data 
+    } catch (error) {
+        console.error('Erro ao buscar profissional', error)
+        throw error;
+        
+    }
+}
+
+
 export const getPatients = async (token: string) => {
 
     try {
@@ -70,6 +86,11 @@ export const getPatients = async (token: string) => {
         throw error;
     }
 }
+
+
+
+
+
 
 export const fetchSchedules = async (token: string, id:string) => {
     try {

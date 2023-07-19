@@ -165,14 +165,14 @@ const CalendarPage: React.FC = () => {
           calendar.setOption('contentHeight', '200px');
           calendar.setOption('height', '200px');
         } else if (width >= 768 && width < 1024) {
-          calendar.setOption('contentHeight', '400px');
-          calendar.setOption('height', '40px');
+          calendar.setOption('contentHeight', '550px');
+          calendar.setOption('height', '550px');
         } else if (width >= 1025 && width < 1367) {
-          calendar.setOption('contentHeight', '510px');
-          calendar.setOption('height', '510px');
+          calendar.setOption('contentHeight', '550px');
+          calendar.setOption('height', '550px');
         } else {
-          calendar.setOption('contentHeight', '580px');
-          calendar.setOption('height', '580px');
+          calendar.setOption('contentHeight', '650px');
+          calendar.setOption('height', '650px');
         }
       };
 

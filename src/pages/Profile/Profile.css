@@ -1,0 +1,47 @@
+.formItem{
+    display: flex;
+    justify-content: center;
+}
+
+.ant-tabs-content{
+    width: 900px;
+}
+
+
+.form-group{
+    padding:10px;
+    border:2px solid;
+    margin:10px;
+  }
+  .form-group>label{
+    position:absolute;
+    top:-1px;
+    left:20px;
+    background-color:white;
+  }
+  
+  .form-group>input{
+    border:none;
+  }
+  .item-form {
+
+    width: 100%;
+  
+  
+  }
+
+  .avatar-upload-container .ant-upload {
+    border-radius: 50%;
+  }
+  
+  /* Estilo para a imagem dentro do componente Upload */
+  .avatar-upload-container .avatar-image {
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .ant-upload{
+    border-radius: 50%;
+  }

@@ -11,6 +11,8 @@ import CalendarPage from './pages/Schedule/CalendarPage'
 import Patients from './pages/Patients/Patients'
 import LayoutPrincipal from './pages/Layout/Layout'
 import Consults from './pages/Consults/Consults'
+import Profile from './pages/Profile/Profile'
+import MyPlan from './pages/MyPlan/MyPlan'
 
 
 function App() {
@@ -55,6 +57,16 @@ function App() {
           <Route path="/consults">
             <ProtectedLayout>
             <LayoutPrincipal content={<Consults/>}/>
+            </ProtectedLayout>
+          </Route>
+          <Route path="/myPlan">
+            <ProtectedLayout>
+            <LayoutPrincipal content={<MyPlan/>}/>
+            </ProtectedLayout>
+          </Route>
+          <Route path="/profile">
+            <ProtectedLayout>
+            <LayoutPrincipal content={<Profile/>}/>
             </ProtectedLayout>
           </Route>
           <Route path='/login'>

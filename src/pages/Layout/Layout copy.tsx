@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Layout.css';
 import Patients from '../Patients/Patients';
-import { CalendarOutlined, DollarOutlined, LogoutOutlined, SettingOutlined, UnorderedListOutlined, UploadOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
-import { Layout, Menu, Avatar, Typography, Modal, Button, Upload, Col, message } from 'antd';
+import { CalendarOutlined, DollarOutlined, LogoutOutlined, SettingOutlined, UnorderedListOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu, Avatar, Typography } from 'antd';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import { logoutUser } from '../../components/ProtectedLayout/Logout/logout';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -22,10 +22,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   const auth = useAuth();
   const logout = logoutUser();
   const [activePage, setActivePage] = useState<string>('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isMouseOver, setIsMouseOver] = useState(false);
-  const [fileList, setFileList] = useState([]);
-  const [currentPhoto, setCurrentPhoto] = useState<string | null>(null)
+
   const photo = auth.image || '';
   const base64String = Buffer.from(photo).toString('base64');
   const imageUrl = `data:image/jpeg;base64,${base64String}`;
@@ -35,12 +32,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
     if (storedActivePage) {
       setActivePage(storedActivePage);
     }
-    setCurrentPhoto(imageUrl)
   }, []);
-
-  const handleSave = () => {
-
-  }
 
   const handleMenuClick = (page: string) => {
     if (page === activePage) {
@@ -81,24 +73,6 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
     return null;
   };
 
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleUploadImage = (info: any) => {
-    if (info.file.status === 'done' && info.file.response) {
-      setCurrentPhoto(info.file.response.url);
-      setFileList(info.fileList)
-    }
-    if (info.file.status === 'error') {
-      message.error('Erro ao enviar a imagem!');
-    }
-  };
-
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed} style={{
@@ -107,6 +81,8 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
         left: 0,
         backgroundColor: '#15458d'
       }}>
+
+
         <Menu
           theme="dark"
           mode="inline"
@@ -115,19 +91,13 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
           style={{ marginTop: '20%', backgroundColor: '#15458d' }}
           onClick={({ key }) => handleMenuClick(key as string)}
         >
-          <div className={`custom-avatar-container ${isMouseOver ? 'avatar-hover' : ''}`}
-            onClick={handleOpenModal}
-            onMouseEnter={() => setIsMouseOver(true)}  // Adicionamos um evento para definir isMouseOver como true ao passar o mouse sobre o Avatar
-            onMouseLeave={() => setIsMouseOver(false)} // Adicionamos um evento para definir isMouseOver como false ao tirar o mouse do Avatar
-
-          >
+          <div className="avatar-container">
             <Avatar
               className="custom-avatar"
               src={imageUrl}
               alt="Foto de Perfil"
               size={100}
               shape="circle"
-              onClick={handleOpenModal}
             />
           </div>
 
@@ -164,6 +134,8 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
             />
           </div>
 
+
+
           <Menu.Item key="logout" style={{ marginTop: '30%' }} icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
             Sair
           </Menu.Item>
@@ -174,79 +146,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
           {renderContent()}
         </Content>
       </Layout>
-      <Modal
-        visible={isModalVisible}
-        onCancel={handleCloseModal}
-        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        footer={[
-          <Col span={24} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '400px', marginTop: '15%' }}>
-
-            <Upload
-              key="upload"
-              name="avatar"
-              showUploadList={false}
-              fileList={fileList}
-              beforeUpload={(file) => {
-                // Verifica a extensão do arquivo
-                const fileType = file.type;
-                if (fileType !== 'image/jpeg' && fileType !== 'image/png') {
-                  message.error('Você pode somente enviar arquivos JPG ou PNG!');
-                  return false;
-                }
-
-                // Verifica o tamanho do arquivo (em bytes)
-                const fileSize = file.size;
-                const maxSize = 2 * 1024 * 1024; // 2MB
-                if (fileSize > maxSize) {
-                  message.error('A imagem deve ter no máximo 2MB!');
-                  return false;
-                }
-
-                // Processa o arquivo caso as validações sejam bem-sucedidas
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                  setCurrentPhoto(reader.result as string);
-                };
-
-                return false; // Retorna 'false' para impedir o envio automático do arquivo
-              }}
-              onChange={handleUploadImage}
-            >
-              <Button key="alterar">
-                Alterar
-              </Button>
-            </Upload>
-            <Button key="save" onClick={handleSave} style={{ marginLeft: 8 }}>
-              Salvar
-            </Button>
-            <Button key="cancel" onClick={handleCloseModal}>
-              Cancelar
-            </Button>
-          </Col>
-        ]}
-        maskClosable={false}
-      >
-        {/* Conteúdo do modal */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
-          {currentPhoto ? (
-            <Avatar
-              className="custom-avatar"
-              src={currentPhoto}
-              alt="Foto de Perfil"
-              size={250}
-              shape="circle"
-            />
-          ) : (
-            <div>
-              <UploadOutlined /> Carregar Foto
-            </div>
-          )}
-        </div>
-      </Modal>
     </Layout>
-
   );
 };
 
