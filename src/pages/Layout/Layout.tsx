@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Layout.css';
 import Patients from '../Patients/Patients';
-import { CalendarOutlined, DollarOutlined, LogoutOutlined, SettingOutlined, UnorderedListOutlined, UploadOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
-import { Layout, Menu, Avatar, Typography, Modal, Button, Upload, Col, message } from 'antd';
+import { AreaChartOutlined, CalendarOutlined, DollarOutlined, LogoutOutlined, SettingOutlined, UnorderedListOutlined, UploadOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu, Avatar, Typography, Modal, Button, Upload, Col, message, Result } from 'antd';
 import { useAuth } from '../../context/AuthProvider/useAuth';
 import { logoutUser } from '../../components/ProtectedLayout/Logout/logout';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -12,6 +12,8 @@ import Consults from '../Consults/Consults';
 import logo from '../../assets/logo.png'
 import MyPlan from '../MyPlan/MyPlan';
 import Profile from '../Profile/Profile';
+import { getProfessionalPhoto, updatePhoto } from '../../context/AuthProvider/util';
+import Dashboard from '../Dashboard/Dashboard';
 
 const { Sider, Content } = Layout;
 
@@ -20,26 +22,53 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
   const auth = useAuth();
+  const token = auth.token || '';
+  const id = (auth.id || '').toString();
   const logout = logoutUser();
   const [activePage, setActivePage] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null)
-  const photo = auth.image || '';
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
+  const [showCreateResult, setShowCreateResult] = useState(false);
+  const [photo, setPhoto] = useState('');
   const base64String = Buffer.from(photo).toString('base64');
   const imageUrl = `data:image/jpeg;base64,${base64String}`;
 
+  //console.log(base64String)
+ 
+
   useEffect(() => {
+
     const storedActivePage = localStorage.getItem('activePage');
     if (storedActivePage) {
       setActivePage(storedActivePage);
     }
-    setCurrentPhoto(imageUrl)
-  }, []);
+    const fetchProfessionalData = async () => {
+      try {
 
-  const handleSave = () => {
+        const professionalPhoto = await getProfessionalPhoto(token, id)
+        setPhoto(professionalPhoto.image)
+        // console.log('professionalPhoto:', professionalPhoto);
 
+
+      } catch (error) {
+        console.error('Erro ao buscar dados do profissional:', error);
+      }
+    };
+
+    fetchProfessionalData();
+   
+  }, [token, id]);
+
+  useEffect(() => {
+    const base64String = Buffer.from(photo).toString('base64');
+    const imageUrl = `data:image/jpeg;base64,${base64String}`;
+    setCurrentPhoto(imageUrl);
+  }, [photo]);
+  if(location.pathname === '/dashboard'){
+    setActivePage('dashboard');
   }
 
   const handleMenuClick = (page: string) => {
@@ -56,6 +85,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   }, [activePage]);
 
   const renderContent = () => {
+    
     if (activePage === 'patientList') {
       history.push('/patients')
       return <Patients />;
@@ -74,7 +104,12 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
       history.push('/profile')
       return <Profile />;
       // Renderizar o componente correspondente para 'profile'
+    } else if (activePage === 'dashboard') {
+      history.push('/dashboard')
+      return <Dashboard />;
+      // Renderizar o componente correspondente para 'Dashboard'
     }
+
 
     // Adicione mais condições para outras páginas do menu, se necessário
 
@@ -97,7 +132,42 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
     if (info.file.status === 'error') {
       message.error('Erro ao enviar a imagem!');
     }
+    // Ao final do processo, armazene o arquivo da imagem selecionada em currentFile
+    if (info.file && info.file.originFileObj) {
+      setCurrentFile(info.file.originFileObj as File);
+    }
   };
+
+  const handleSave = async () => {
+    // Verifica se há uma imagem selecionada
+    if (!currentFile) {
+      message.error('Por favor, selecione uma imagem para atualizar.');
+      return;
+    }
+
+    try {
+      const photoData = new FormData();
+      photoData.append('image', currentFile);
+
+      // Chame a função updatePhoto passando o FormData com a imagem selecionada
+      await updatePhoto(photoData, token, id);
+      //message.success('Foto do perfil foi atualizada com sucesso');
+      // Atualiza diretamente o estado 'photo' com a nova imagem retornada pela API
+      const professionalPhoto = await getProfessionalPhoto(token, id)
+      setPhoto(professionalPhoto.image)
+    } catch (error) {
+      console.error('Erro ao atualizar foto', error);
+      message.error('Ocorreu um erro ao atualizar a foto');
+    }
+
+    handleCloseModal();
+    setShowCreateResult(true)
+  };
+
+  const closeCreateMessage = () => {
+    setShowCreateResult(false)
+
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -121,6 +191,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
             onMouseLeave={() => setIsMouseOver(false)} // Adicionamos um evento para definir isMouseOver como false ao tirar o mouse do Avatar
 
           >
+
             <Avatar
               className="custom-avatar"
               src={imageUrl}
@@ -137,6 +208,9 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
             </Typography.Text>
           </div>
 
+          <Menu.Item key="dashboard" icon={<AreaChartOutlined style={{ fontSize: '15px' }} />}>
+            Dashboard
+          </Menu.Item>
           <Menu.Item key="patientList" icon={<UserAddOutlined style={{ fontSize: '15px' }} />}>
             Pacientes
           </Menu.Item>
@@ -172,6 +246,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
       <Layout style={{ marginLeft: collapsed ? 80 : 200 }}>
         <Content style={{ margin: '24px 16px', padding: 24, minHeight: 150, background: 'white' }}>
           {renderContent()}
+
         </Content>
       </Layout>
       <Modal
@@ -207,6 +282,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
                 reader.readAsDataURL(file);
                 reader.onload = () => {
                   setCurrentPhoto(reader.result as string);
+                  setCurrentFile(file as File); // Armazena o arquivo da imagem selecionada
                 };
 
                 return false; // Retorna 'false' para impedir o envio automático do arquivo
@@ -214,7 +290,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
               onChange={handleUploadImage}
             >
               <Button key="alterar">
-                Alterar
+                Alterar foto
               </Button>
             </Upload>
             <Button key="save" onClick={handleSave} style={{ marginLeft: 8 }}>
@@ -244,6 +320,21 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
             </div>
           )}
         </div>
+      </Modal>
+      <Modal
+        visible={showCreateResult}
+        centered
+        footer={null}
+      >
+        <Result
+          status="success"
+          title="Foto do perfil atualizada com Sucesso!"
+          extra={[
+            <Button id='btnOkMessagePatient' type="primary" key="ok" onClick={closeCreateMessage}>
+              OK
+            </Button>
+          ]}
+        ></Result>
       </Modal>
     </Layout>
 

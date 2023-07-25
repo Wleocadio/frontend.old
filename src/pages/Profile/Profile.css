@@ -45,3 +45,11 @@
   .ant-upload{
     border-radius: 50%;
   }
+
+  .custom-formProfile.ant-form-horizontal.ant-form {
+    /* Defina as regras de estilo desejadas para o formulário aqui */
+    /* Por exemplo, você pode ajustar o tamanho usando a propriedade 'width' */
+    width: 100%;
+    /* Ou definir uma largura máxima */
+    max-width: 800px;
+  }
