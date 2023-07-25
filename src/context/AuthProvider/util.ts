@@ -67,6 +67,21 @@ export const getProfessionalId = async (token: string, id: string) =>{
     }
 }
 
+export const getProfessionalPhoto = async (token: string, id: string) =>{
+    try {
+        const response = await Api.get(`/professional/photo/${id}`, {
+            headers:{
+                Authorization: token
+            }
+        })
+        return response.data 
+    } catch (error) {
+        console.error('Erro ao buscar a foto profissional', error)
+        throw error;
+        
+    }
+}
+
 
 export const getPatients = async (token: string) => {
 
@@ -207,16 +222,31 @@ export const updateSchedule = async (scheduleData: any, token: string, id:string
         throw error;
     }
 }
+export const updatePhoto = async (photoData: any, token: string, id:string) => {
+    try {
+      // Supondo que você tenha uma instância do axios chamada "Api" configurada corretamente
+        const response = await Api.put(`/professional/photo/${id}`, photoData, {
+            headers: {
+                Authorization: token,
+                'Content-Type': 'multipart/form-data', // Adicione o tipo de conteúdo apropriado para enviar arquivos
+            },
+        })
+        const responseData = response.data
+                
+            if (response.status = 201){
+                console.log("Foto do perfil foi atualizada com sucesso")
 
+            } else {
+                console.log("Erro ao atualizar foto")
+            }
 
+        return responseData
 
-
-
-
-
-
-
-
+    } catch (error) {
+        console.error('Ocorreu um erro na atualização da foto', error)
+        throw error;
+    }
+}
 
 export const createPatients = async (patientData: any, token: string) => {
     try {
@@ -244,3 +274,5 @@ export const createPatients = async (patientData: any, token: string) => {
         throw error;
     }
 }
+
+

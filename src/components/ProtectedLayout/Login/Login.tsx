@@ -44,7 +44,7 @@ export const Login = () => {
     }
 
     if (loggedIn) {
-        history.push('/');
+        history.push('/dashboard');
         return <LayoutPrincipal content={<Dashboard/>}/>
     }
 
