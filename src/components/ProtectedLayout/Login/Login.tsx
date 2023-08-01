@@ -28,6 +28,7 @@ export const Login = () => {
         if (isChecked) {
             localStorage.setItem("ue", email); // Armazena o email no localStorage com a chave "ue"
             localStorage.setItem("up", password); // Armazena a senha no localStorage com a chave "up"
+           // localStorage.setItem("activePage", 'dashboard');
         }
 
         //console.log(values.email, values.password + ' onFinish')
@@ -35,7 +36,7 @@ export const Login = () => {
 
             await auth.authenticate(values.email, values.password) // Chama a função de autenticação fornecida pelo objeto auth
 
-           // history.push('/Dashboard'); // Redireciona o usuário para a página "/Dashboard"
+          // history.push(''); // Redireciona o usuário para a página "/Dashboard"
             setLoggedIn(true);
            // window.location.reload(); // Recarrega a página
         } catch (error) {
@@ -44,7 +45,7 @@ export const Login = () => {
     }
 
     if (loggedIn) {
-        history.push('/dashboard');
+       //history.push('dashboard');
         return <LayoutPrincipal content={<Dashboard/>}/>
     }
 

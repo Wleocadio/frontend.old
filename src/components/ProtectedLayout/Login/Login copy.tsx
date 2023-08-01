@@ -31,7 +31,7 @@ export const Login = () => {
 
             await auth.authenticate(values.email, values.password)
 
-            history.push('/Dashboard');
+            history.push('/dashboard');
             window.location.reload();
         } catch (error) {
 

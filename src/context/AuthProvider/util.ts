@@ -222,6 +222,33 @@ export const updateSchedule = async (scheduleData: any, token: string, id:string
         throw error;
     }
 }
+
+export const updateProfessional = async (professionalData: any, token: string, id:string) => {
+    try {
+       console.log(professionalData)
+        const response = await Api.put(`/professional/${id}`, professionalData, {
+            headers: {
+                Authorization: token
+            },
+        })
+        const responseData = response.data
+                
+            if (response.status = 201){
+                console.log("Profissional atualizada com sucesso")
+
+            } else {
+                console.log("Erro ao atualizar Profissional")
+            }
+
+        return responseData
+
+    } catch (error) {
+        console.error('Ocorreu algum erro na atualização do profissional', error)
+        throw error;
+    }
+}
+
+
 export const updatePhoto = async (photoData: any, token: string, id:string) => {
     try {
       // Supondo que você tenha uma instância do axios chamada "Api" configurada corretamente

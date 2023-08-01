@@ -13,6 +13,7 @@ import LayoutPrincipal from './pages/Layout/Layout'
 import Consults from './pages/Consults/Consults'
 import Profile from './pages/Profile/Profile'
 import MyPlan from './pages/MyPlan/MyPlan'
+import Home from './pages/Home/Home'
 
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
         <Switch>
         <Route exact path='/'>
             
-            <h2> Bem Vindo</h2>
+            <Home/>
             
           </Route>
           <Route path="/dashboard">

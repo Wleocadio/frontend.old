@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Tabs } from "antd";
+import { Button, Col, Form, Input, Modal, Result, Row, Tabs } from "antd";
 import React, { useEffect, useState } from "react";
 import { Buffer } from 'buffer';
 import { useAuth } from "../../context/AuthProvider/useAuth";
@@ -6,6 +6,8 @@ import { getProfessionalId, updateProfessional } from "../../context/AuthProvide
 import TabPane from "antd/es/tabs/TabPane";
 import { Select } from 'antd';
 import { DeleteTwoTone, DownCircleOutlined, PlusSquareTwoTone, UpCircleOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
+import './Profile.css'
 
 interface Formation {
     formation: string;
@@ -48,11 +50,14 @@ const Profile: React.FC = () => {
     const id = (auth.id || '').toString();
     const [professional, setProfessional] = useState<Professional | null>(null);
     const [isFormationExpanded, setIsFormationExpanded] = useState(false);
+    const [showSaved, setShowSaved] = useState(false);
     const [formationCount, setFormationCount] = useState<number>(0);
     const [form] = Form.useForm();
     const { Option } = Select
+    const history = useHistory()
 
     useEffect(() => {
+
         const fetchProfessionalData = async () => {
             try {
                 const professionalData = await getProfessionalId(token, id);
@@ -62,6 +67,7 @@ const Profile: React.FC = () => {
             }
         };
         fetchProfessionalData();
+
     }, []);
 
     const handleSave = () => {
@@ -69,66 +75,78 @@ const Profile: React.FC = () => {
 
         if (!professional) return;
 
-        const values = form.getFieldsValue();
-        const {
-            name,
-            valorSessao,
-            experiencias,
-            descPessoal,
-            cpf,
-            email,
-            telefone,
-            nascimento,
-            estado,
-            cep,
-            cidade,
-            bairro,
-            rua,
-            numero,
-            cnpj,
-            registro,
-            profissao,
-            specialties,
-        } = values;
-        console.log(name)
-        console.log(valorSessao)
+        const inputName = form.getFieldValue('name');
+        const inputValorSessao = form.getFieldValue('valorSessao');
+        const inputExperiencias = form.getFieldValue('experiencias');
+        const inputDescPessoal = form.getFieldValue('descPessoal');
+        const inputCpf = form.getFieldValue('cpf');
+        const inputEmail = form.getFieldValue('email');
+        const inputTelefone = form.getFieldValue('telefone');
+        const inputNascimento = form.getFieldValue('nascimento');
+        const inputEstado = form.getFieldValue('estado');
+        const inputCep = form.getFieldValue('cep');
+        const inputCidade = form.getFieldValue('cidade');
+        const inputBairro = form.getFieldValue('bairro');
+        const inputRua = form.getFieldValue('rua');
+        const inputNumero = form.getFieldValue('numero');
+        const inputCnpj = form.getFieldValue('cnpj');
+        const inputRegistro = form.getFieldValue('registro');
+        const inputProfissao = form.getFieldValue('profissao');
+        const inputSpecialties = form.getFieldValue('specialties');
+        const formation = initialValues.formation.map((index) => {
+            const formacao = form.getFieldValue(`formacao-${index}`)
+            const curso = form.getFieldValue(`course-${index}`);
+            const instituicao = form.getFieldValue(`institution-${index}`);
+            const status = form.getFieldValue(`status-${index}`);
+            const startDate = form.getFieldValue(`startDate-${index}`);
+            const endDate = form.getFieldValue(`endDate-${index}`);
+
+            return {
+                formacao,
+                curso,
+                instituicao,
+                status,
+                startDate,
+                endDate,
+            }
+        })
+        console.log(formation)
+
+        console.log(inputName)
+        console.log(inputValorSessao)
+
 
         const professionalData = {
-            name,
-            profession: profissao,
-            professionRegister: registro,
-            cpf,
-            cnpj,
-            mail: email,
-            phone: telefone,
-            birth: nascimento,
-            zipCode: cep,
-            state: estado,
-            city: cidade,
-            street: rua,
-            number: numero,
-            district: bairro,
-            // specialties: specialties.join(','), // Converter o array de especialidades para uma string separada por vírgulas
-            experience: experiencias,
-            selfDescription: descPessoal,
-            serviceValue: valorSessao,
+            name: inputName,
+            profession: inputProfissao,
+            professionRegister: inputRegistro,
+            cpf: inputCpf,
+            cnpj: inputCnpj,
+            mail: inputEmail,
+            phone: inputTelefone,
+            //gender: string;
+            birth: inputNascimento,
+            zipCode: inputEstado,
+            state: inputCep,
+            city: inputCidade,
+            street: inputRua,
+            number: inputNumero,
+            district: inputBairro,
+            //specialties: string,
+            experience: inputExperiencias,
+            formation,
+            selfDescription: inputDescPessoal,
+            serviceValue: inputValorSessao,
+
+
         };
         console.log(professionalData)
-
-
         if (professional) {
             updateProfessional(professionalData, token, id)
                 .then(() => {
-                    // Dados do profissional atualizados com sucesso
+                    //setShowSaved(true)
                 })
-                .catch((error) => {
-                    console.error('Erro ao atualizar os dados do profissional:', error);
-                });
         }
-
-
-
-
 
         form.resetFields();
         //setModalOpen(false);
@@ -138,23 +156,24 @@ const Profile: React.FC = () => {
     console.log(professional?.formation)
 
     const toggleFormation = () => {
-        if (formationCount < 5) {
-            setProfessional((prevProfessional) => ({
-                ...prevProfessional!,
-                formation: [...prevProfessional!.formation, createEmptyFormation()],
-            }));
-            setFormationCount((prevFormationCount) => prevFormationCount + 1);
-        }
+        /*   if (formationCount < 5) {
+               setProfessional((prevProfessional) => ({
+                   ...prevProfessional!,
+                   formation: [...prevProfessional!.formation, createEmptyFormation()],
+               }));
+               setFormationCount((prevFormationCount) => prevFormationCount + 1);
+           }*/
         setIsFormationExpanded((prevIsFormationExpanded) => !prevIsFormationExpanded);
     };
 
     const handleAddFormation = () => {
-        if (formationCount < 7) {
+        if (formationCount < 5) {
             setProfessional((prevProfessional) => {
                 if (prevProfessional) {
+                    const newFormation = createEmptyFormation();
                     return {
                         ...prevProfessional,
-                        formation: [...prevProfessional.formation, createEmptyFormation()],
+                        formation: [...prevProfessional.formation, newFormation],
                     };
                 }
                 return null;
@@ -202,8 +221,33 @@ const Profile: React.FC = () => {
         startDate: "",
         endDate: "",
     });
+    const initialValues = {
+        name: professional?.name || '',
+        valorSessao: professional?.serviceValue || '',
+        experiencias: professional?.experience || '',
+        descPessoal: professional?.selfDescription || '',
+        cpf: professional?.cpf || '',
+        email: professional?.mail || '',
+        telefone: professional?.phone || '',
+        nascimento: professional?.birth || '',
+        estado: professional?.state || '',
+        cep: professional?.zipCode || '',
+        cidade: professional?.city || '',
+        bairro: professional?.district || '',
+        rua: professional?.street || '',
+        numero: professional?.number || '',
+        cnpj: professional?.cnpj || '',
+        registro: professional?.professionRegister || '',
+        profissao: professional?.profession || '',
+        specialties: professional?.specialties?.split(',') || [],
+        formation: professional?.formation || []
+    };
 
-
+    const closeSaveMessage = () => {
+        setShowSaved(false)
+        //history.push('/schedule');
+        window.location.reload()
+    }
 
     return (
         <div>
@@ -213,9 +257,8 @@ const Profile: React.FC = () => {
             {professional && (
                 <Form
                     form={form}
-
                     onFinish={handleSave}
-
+                    initialValues={initialValues}
                     style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-15px' }}
                 >
 
@@ -224,28 +267,31 @@ const Profile: React.FC = () => {
                         <TabPane tab="Perfil" key="1" style={{ width: '400px' }}>
 
                             <Col span={24}>
+                                <label htmlFor="inputName">Nome</label>
                                 <Form.Item name="name">
-                                    <label htmlFor="inputName">Nome</label>
-                                    <Input style={{ width: 400, display: 'block' }} id="inputName" value={professional.name} disabled />
+                                    <Input id="inputName" disabled />
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
+                                <label htmlFor="valorSessao">Valor da Sessão</label>
                                 <Form.Item name="valorSessao">
-                                    <label htmlFor="valorSessao">Valor da Sessão</label>
-                                    <Input style={{ display: 'block' }} id="inputValorSessao" defaultValue={professional.serviceValue} />
+
+                                    <Input style={{ display: 'block' }} id="inputValorSessao" />
 
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
+                                <label htmlFor="experiencias">Experiência</label>
                                 <Form.Item name="experiencias">
-                                    <label htmlFor="experiencias">Experiência</label>
-                                    <Input.TextArea style={{ width: 400, display: 'block' }} id="inputExperiencias" defaultValue={professional.experience} rows={5} />
+
+                                    <Input.TextArea style={{ width: 400, display: 'block' }} id="inputExperiencias" rows={5} />
 
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
+                                <label htmlFor="resumo">Especialidades</label>
                                 <Form.Item name="">
-                                    <label htmlFor="resumo">Especialidades</label>
+
                                     <Select
                                         style={{ width: 400, display: 'block' }}
                                         mode="tags" // Permite inserir novas especialidades e selecionar as existentes
@@ -267,79 +313,78 @@ const Profile: React.FC = () => {
                             </div>
                             {isFormationExpanded && (
                                 <div>
-                                    {professional.formation.map((formationItem, index) => (
+                                    {initialValues.formation.map((formationItem, index) => (
                                         <div key={index} style={{ display: 'flex', width: '800px' }}>
-                                            <Form
-
-                                                style={{
+                                            <div
+                                                    style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     width: '410px',
-
                                                     borderBottom: '1px solid gray', // Define uma borda superior branca
                                                     background: '#ff8f8',
                                                 }}
                                             >
                                                 <Row gutter={16}>
                                                     <Col span={8}>
-                                                        <Form.Item name="" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '5%' }}>
-                                                            <label htmlFor="formacao">Formação</label>
-                                                            <Input id={`type-${index}`} value={formationItem.formation} placeholder="Formação" />
+                                                        <label htmlFor={`formacao-${index}`}>Formação</label>
+                                                        <Form.Item name={`formacao-${index}`} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '5%' }}>
+                                                            <Input  id={`type-${index}`} defaultValue={formationItem.course} placeholder="Formação" />
                                                         </Form.Item>
                                                     </Col>
 
                                                     <Col span={16} >
-                                                        <Form.Item name="" style={{ marginTop: '2%' }}>
-                                                            <label htmlFor="formacao">Curso</label>
-                                                            <Input style={{ width: '260px', display: 'block' }} id={`type-${index}`} value={formationItem.course} placeholder="Curso" />
+                                                        <label htmlFor={`course-${index}`}>Curso</label>
+                                                        <Form.Item name={`course-${index}`} style={{ marginTop: '2%' }}>
+                                                            <Input style={{ width: '260px', display: 'block' }} id={`type-${index}`} defaultValue={formationItem.course} placeholder="Curso" />
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={16}>
-                                                        <Form.Item name="" style={{ marginTop: '-5%' }}>
-                                                            <label htmlFor="formacao">Instituição</label>
-                                                            <Input style={{ width: '280px', display: 'block' }} id={`type-${index}`} value={formationItem.institution} placeholder="Instituição" />
+                                                        <label htmlFor={`institution-${index}`}>Instituição</label>
+                                                        <Form.Item name={`institution-${index}`} >
+                                                            <Input style={{ width: '280px', display: 'block' }} id={`type-${index}`} defaultValue={formationItem.institution} placeholder="Instituição" />
                                                         </Form.Item>
 
                                                     </Col>
                                                     <Col span={8} >
-                                                        <Form.Item name="" style={{ marginTop: '-11%' }}>
-                                                            <label htmlFor="formacao">Status</label>
-                                                            <Input style={{ width: '87px', display: 'block' }} id={`type-${index}`} value={formationItem.status} placeholder="status" />
+                                                        <label htmlFor={`status-${index}`}>Status</label>
+                                                        <Form.Item name={`status-${index}`}>
+                                                            <Input style={{ width: '87px', display: 'block' }} id={`type-${index}`} defaultValue={formationItem.status} placeholder="status" />
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={8}>
-                                                        <Form.Item name="" style={{ marginTop: '-13%' }}>
-                                                            <label htmlFor="formacao">Inicio</label>
-                                                            <Input id={`type-${index}`} value={formationItem.startDate} placeholder="Inicio" />
+                                                        <label htmlFor={`startDate-${index}`}>Inicio</label>
+                                                        <Form.Item name={`startDate-${index}`} >
+                                                            <Input id={`type-${index}`} defaultValue={formationItem.startDate} placeholder="Inicio" />
                                                         </Form.Item>
 
                                                     </Col>
                                                     <Col span={8} >
-                                                        <Form.Item name="" style={{ marginTop: '-13%' }}>
-                                                            <label htmlFor="formacao">Termino</label>
-                                                            <Input id={`type-${index}`} value={formationItem.endDate} placeholder="Termino" />
+                                                        <label htmlFor={`endDate-${index}`}>Termino</label>
+                                                        <Form.Item name={`endDate-${index}`} >
+                                                            <Input id={`type-${index}`} defaultValue={formationItem.endDate} placeholder="Termino" />
                                                         </Form.Item>
                                                     </Col>
-                                                    <Button style={{ marginTop: '1%' }} icon={<DeleteTwoTone />}>Excluir</Button>
+                                                    <Button style={{ marginTop: '5%' }} icon={<DeleteTwoTone />}>Excluir</Button>
                                                 </Row>
-                                            </Form>
+                                                </div>
                                         </div>
 
                                     ))}
 
 
-                                    {formationCount < 5 && (
-                                        <Button onClick={handleAddFormation} icon={<PlusSquareTwoTone />}>
-                                            Adicionar Formação
-                                        </Button>
-                                    )}
+
                                 </div>
+                            )}
+                            {formationCount < 5 && (
+                                <Button onClick={handleAddFormation} icon={<PlusSquareTwoTone />}>
+                                    Adicionar Formação
+                                </Button>
                             )}
 
                             <Col span={24}>
+                                <label htmlFor="descricaoPessoal">Descrição Pessoal</label>
                                 <Form.Item name="descPessoal" style={{ marginTop: '2%' }}>
-                                    <label htmlFor="descricaoPessoal">Descrição Pessoal</label>
-                                    <Input.TextArea style={{ width: 400, display: 'block' }} id="inputDescPessoal" defaultValue={professional.selfDescription} rows={5} />
+                                    <Input.TextArea style={{ width: 400, display: 'block' }} id="inputDescPessoal" rows={5} />
 
                                 </Form.Item>
                             </Col>
@@ -348,68 +393,80 @@ const Profile: React.FC = () => {
                         </TabPane>
                         <TabPane tab="Dados Pessoais" key="2" style={{ width: '400px' }}>
                             <Form
-
+                                form={form}
+                                onFinish={handleSave}
+                                initialValues={initialValues}
                             >
                                 <Row gutter={16}>
                                     <Col span={12}>
+                                        <label htmlFor="CPF">CPF</label>
                                         <Form.Item name="cpf">
-                                            <label htmlFor="CPF">CPF</label>
-                                            <Input style={{ display: 'block' }} id="inputCpf" defaultValue={professional.cpf} disabled />
+
+                                            <Input style={{ display: 'block' }} id="inputCpf" disabled />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Email">Email</label>
                                         <Form.Item name="email">
-                                            <label htmlFor="Email">Email</label>
-                                            <Input style={{ display: 'block' }} id="inputEmail" defaultValue={professional.mail} />
+
+                                            <Input style={{ display: 'block' }} id="inputEmail" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Telefone">Telefone</label>
                                         <Form.Item name="telefone">
-                                            <label htmlFor="Telefone">Telefone</label>
-                                            <Input style={{ display: 'block' }} id="inputTelefone" defaultValue={professional.phone} />
+
+                                            <Input style={{ display: 'block' }} id="inputTelefone" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Nascimento">Nascimento</label>
                                         <Form.Item name="nascimento">
-                                            <label htmlFor="Nascimento">Nascimento</label>
-                                            <Input style={{ display: 'block' }} id="inputNascimento" defaultValue={professional.birth} />
+
+                                            <Input style={{ display: 'block' }} id="inputNascimento" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Estado">Estado</label>
                                         <Form.Item name="estado">
-                                            <label htmlFor="Estado">Estado</label>
-                                            <Input style={{ display: 'block' }} id="inputEstado" defaultValue={professional.state} />
+
+                                            <Input style={{ display: 'block' }} id="inputEstado" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="CEP">Cep</label>
                                         <Form.Item name="cep">
-                                            <label htmlFor="CEP">Cep</label>
-                                            <Input style={{ display: 'block' }} id="inputCep" defaultValue={professional.zipCode} />
+
+                                            <Input style={{ display: 'block' }} id="inputCep" />
                                         </Form.Item>
                                     </Col>
 
                                     <Col span={12}>
+                                        <label htmlFor="Cidade">Cidade</label>
                                         <Form.Item name="cidade">
-                                            <label htmlFor="Cidade">Cidade</label>
-                                            <Input style={{ width: 200, display: 'block' }} id="inputCidade" defaultValue={professional.city} />
+
+                                            <Input style={{ width: 200, display: 'block' }} id="inputCidade" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Bairro">Bairro</label>
                                         <Form.Item name="bairro">
-                                            <label htmlFor="Bairro">Bairro</label>
-                                            <Input style={{ width: 200, display: 'block' }} id="inputBairro" defaultValue={professional.district} />
+
+                                            <Input style={{ width: 200, display: 'block' }} id="inputBairro" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Rua">Rua</label>
                                         <Form.Item name="rua">
-                                            <label htmlFor="Rua">Rua</label>
-                                            <Input style={{ display: 'block' }} id="inputRua" defaultValue={professional.street} />
+
+                                            <Input style={{ display: 'block' }} id="inputRua" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Numero">Numero</label>
                                         <Form.Item name="numero">
-                                            <label htmlFor="Numero">Numero</label>
-                                            <Input style={{ display: 'block' }} id="inputNumero" defaultValue={professional.number} />
+
+                                            <Input style={{ display: 'block' }} id="inputNumero" />
                                         </Form.Item>
                                     </Col>
                                 </Row>
@@ -418,25 +475,29 @@ const Profile: React.FC = () => {
                         </TabPane>
                         <TabPane tab="Dados Profissionais" key="3" style={{ width: '400px' }}>
                             <Form
-
+                                form={form}
+                                onFinish={handleSave}
+                                initialValues={initialValues}
                             >
                                 <Row gutter={16}>
                                     <Col span={12}>
+                                        <label htmlFor="CNPJ">CNPJ</label>
                                         <Form.Item name="cnpj">
-                                            <label htmlFor="CNPJ">CNPJ</label>
-                                            <Input style={{ display: 'block' }} id="inputCnpj" defaultValue={professional.cnpj} />
+
+                                            <Input style={{ display: 'block' }} id="inputCnpj" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
+                                        <label htmlFor="Registro Profissional">Registro Profissional</label>
                                         <Form.Item name="registro">
-                                            <label htmlFor="Registro Profissional">Registro Profissional</label>
-                                            <Input style={{ width: 100, display: 'block' }} id="inputRegistro" defaultValue={professional.professionRegister} />
+
+                                            <Input style={{ width: 100, display: 'block' }} id="inputRegistro" />
                                         </Form.Item>
                                     </Col>
                                     <Col span={24}>
+                                        <label htmlFor="Profissao">Profissão</label>
                                         <Form.Item name="profissao">
-                                            <label htmlFor="Profissao">Profissão</label>
-                                            <Input style={{ display: 'block' }} id="inputProfissao" defaultValue={professional.profession} />
+                                            <Input style={{ display: 'block' }} id="inputProfissao" />
                                         </Form.Item>
                                     </Col>
 
@@ -451,6 +512,24 @@ const Profile: React.FC = () => {
                 </Form>
 
             )}
+
+            <Modal
+                visible={showSaved}
+                centered
+                footer={null}
+                className="slide-in-modal" // Aplicando a classe de animação ao Modal
+                onCancel={closeSaveMessage}
+            >
+                <Result
+                    status="success"
+                    title="Cadastro atualizado com Sucesso!"
+                    extra={[
+                        <Button id='btnOkMessageSuccess' type="primary" key="ok" onClick={closeSaveMessage}>
+                            OK
+                        </Button>
+                    ]}
+                ></Result>
+            </Modal>
         </div>
     );
 }
