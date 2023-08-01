@@ -17,6 +17,7 @@ import Dashboard from '../Dashboard/Dashboard';
 
 const { Sider, Content } = Layout;
 
+
 const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   const location = useLocation();
   const history = useHistory();
@@ -25,7 +26,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   const token = auth.token || '';
   const id = (auth.id || '').toString();
   const logout = logoutUser();
-  const [activePage, setActivePage] = useState<string>('');
+  const [activePage, setActivePage] = useState<string>(location.pathname);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -37,10 +38,15 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   const imageUrl = `data:image/jpeg;base64,${base64String}`;
 
   //console.log(base64String)
- 
+  if (activePage === '/login') {
+    setActivePage('dashboard')
+  }
 
   useEffect(() => {
-
+    // Monitora a localização atual (pathname) e atualiza a activePage
+    
+    setActivePage(location.pathname.replace(/^\/([^/]*).*$/, '$1'));
+    
     const storedActivePage = localStorage.getItem('activePage');
     if (storedActivePage) {
       setActivePage(storedActivePage);
@@ -59,17 +65,15 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
     };
 
     fetchProfessionalData();
-   
-  }, [token, id]);
+
+  }, [token, id, location.pathname]);
 
   useEffect(() => {
     const base64String = Buffer.from(photo).toString('base64');
     const imageUrl = `data:image/jpeg;base64,${base64String}`;
     setCurrentPhoto(imageUrl);
   }, [photo]);
-  if(location.pathname === '/dashboard'){
-    setActivePage('dashboard');
-  }
+
 
   const handleMenuClick = (page: string) => {
     if (page === activePage) {
@@ -85,14 +89,19 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   }, [activePage]);
 
   const renderContent = () => {
-    
-    if (activePage === 'patientList') {
+
+    // if(location.pathname === '/dashboard'){
+    //  return <Dashboard />
+
+    // }
+
+    if (activePage === 'patients') {
       history.push('/patients')
       return <Patients />;
-    } else if (activePage === 'patientSchedule') {
+    } else if (activePage === 'schedule') {
       history.push('/schedule')
       return <CalendarPage />;
-    } else if (activePage === 'patientConsults') {
+    } else if (activePage === 'consults') {
       history.push('/consults')
       return <Consults />;
       // Renderizar o componente correspondente para 'patientConsults'
@@ -211,13 +220,13 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
           <Menu.Item key="dashboard" icon={<AreaChartOutlined style={{ fontSize: '15px' }} />}>
             Dashboard
           </Menu.Item>
-          <Menu.Item key="patientList" icon={<UserAddOutlined style={{ fontSize: '15px' }} />}>
+          <Menu.Item key="patients" icon={<UserAddOutlined style={{ fontSize: '15px' }} />}>
             Pacientes
           </Menu.Item>
-          <Menu.Item key="patientSchedule" icon={<CalendarOutlined style={{ fontSize: '15px' }} />}>
+          <Menu.Item key="schedule" icon={<CalendarOutlined style={{ fontSize: '15px' }} />}>
             Agenda
           </Menu.Item>
-          <Menu.Item key="patientConsults" icon={<UnorderedListOutlined style={{ fontSize: '15px' }} />}>
+          <Menu.Item key="consults" icon={<UnorderedListOutlined style={{ fontSize: '15px' }} />}>
             Consultas
           </Menu.Item>
           <Menu.Item key="myPlan" icon={<DollarOutlined style={{ fontSize: '15px' }} />}>

@@ -53,3 +53,39 @@
     /* Ou definir uma largura máxima */
     max-width: 800px;
   }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-50%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(50%);
+      opacity: 0;
+    }
+  }
+  
+  .slide-in-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .slide-in-modal .ant-modal-content {
+    animation: slideIn 0.3s ease-in-out;
+  }
+  
+  .slide-out-modal .ant-modal-content {
+    animation: slideOut 0.3s ease-in-out;
+  }
