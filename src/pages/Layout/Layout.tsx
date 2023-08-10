@@ -41,6 +41,21 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
   if (activePage === '/login') {
     setActivePage('dashboard')
   }
+  if (activePage === '/patients') {
+    setActivePage('patients')
+  }
+  if (activePage === '/schedule') {
+    setActivePage('schedule')
+  }
+  if (activePage === '/consults') {
+    setActivePage('consults')
+  }
+  if (activePage === '/profile') {
+    setActivePage('profile')
+  }
+  if (activePage === '/dashboard') {
+    setActivePage('dashboard')
+  }
 
   useEffect(() => {
     // Monitora a localização atual (pathname) e atualiza a activePage
@@ -247,7 +262,7 @@ const LayoutPrincipal: React.FC<{ content: React.ReactNode }> = ({ }) => {
             />
           </div>
 
-          <Menu.Item key="logout" style={{ marginTop: '30%' }} icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
+          <Menu.Item key="logout" style={{ marginTop: '10%' }} icon={<LogoutOutlined style={{ fontSize: '15px' }} />} onClick={logout}>
             Sair
           </Menu.Item>
         </Menu>

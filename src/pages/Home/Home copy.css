@@ -1,0 +1,189 @@
+.classHeaders {
+    height: 80px;
+    background-color: #fafafa;
+    border-bottom-width: 1px;
+    border-bottom-style: ridge;
+    border-bottom-color: #ecebeb;
+}
+.classHeaderButton{
+    background-color: #15458d !important;
+    border-color: #15458d !important;
+    border: 2px solid;
+    color: #ffffff !important;
+    height: 45px;
+    width: 80px;
+    font-size: 15px;
+}
+
+.classHeaderButton:hover{
+  background-color: #ffffff !important;
+  color: #15458d !important;
+}
+
+
+.classHomeButton{
+  background-color: #15458d;
+    border-color: #15458d !important;
+   border: 2px solid;
+    color: #ffffff !important;
+    height: 50px;
+    font-size: 15px;
+    font-family:sans-serif;
+    transition: color 0.2s;
+    border-radius: 30px;
+}
+.classHomeButton:hover{
+    background-color:#ffffff !important;
+    color:#15458d !important;
+
+}
+
+.link-style {
+    font-size: 20px;
+    color: #15458d;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .link-style:hover {
+    color: #23a6f0; /* Mude para a cor que desejar quando o mouse estiver sobre o link */
+  }
+  
+  .arrow-icon {
+    transition: transform 0.3s;
+  }
+  
+  .link-style:hover .arrow-icon {
+    transform: translateX(5px); /* Altere o valor para ajustar o movimento do ícone */
+  }
+
+
+  .image-container{
+   
+    position: relative;
+    overflow: hidden;
+
+  }
+
+  .image{
+    width: auto;
+    height: auto;
+    max-height: 500px;
+    border-top-left-radius: 300px;
+    border-bottom-left-radius: 300px;
+
+  }
+
+  .image-container::before{
+    content: '';
+    position: relative;
+    top:0;
+    left:0;
+    width: 90px; /* Ajuste esse valor para definir a largura da borda */
+    height: 100%;
+    background-color: #000;
+ 
+  }
+  .meu-card-meta {
+    font-size: 50px;
+    margin-bottom: 15px;
+    
+  }
+
+  .titulo-card {
+    color: #ffffff;
+    text-align: left;
+  }
+  
+  .descricao-card {
+    color: #fffefe;
+    text-align: center;
+  }
+
+
+  .ant-carousel {
+    /* Defina a altura do carrossel */
+    height: 300px;
+  }
+  
+  .ant-carousel .slick-slide {
+    /* Defina o estilo dos slides */
+    text-align: center;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .carousel-item {
+    display: inline-block;
+    width: 200px; /* Defina a largura do item conforme sua preferência */
+    margin: 10px; /* Espaçamento entre os itens */
+    text-align: center;
+    border: 1px solid #ccc; /* Adicione borda ou estilização desejada para os itens */
+  }
+  
+  .slider-container {
+    width: 105%; /* Ajuste o tamanho conforme necessário */
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .slider {
+    display: flex;
+    animation:  60s linear infinite;
+  }
+  
+  .news {
+    width: 300px; /* Ajuste o tamanho conforme necessário */
+    flex-shrink: 0;
+    padding: 50px;
+  }
+  
+  @keyframes slide {
+    0% {
+      transform: translateX(100%);
+    }
+    
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .custom-dot {
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: color 0.3s;
+  }
+  
+  .custom-dot.active {
+    color: #333;
+    font-weight: bold;
+  }
+
+  .ant-steps-item-tail {
+    display: none !important;
+
+  }
+  .ant-steps-item-icon{
+    font-size: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .ant-steps-item-icon:nth-child(2) {
+    font-size: 35px;
+    width: 40px;
+    height: 40px;
+  }
+  .ant-steps-item-title{
+    font-size: 20px !important;
+    
+  }
+  .ant-steps-item-container{
+    display: flex;
+
+  }
+ 

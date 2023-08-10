@@ -1,0 +1,50 @@
+.slider-container {
+  width: 100%; /* Ajuste o tamanho conforme necessário */
+  overflow: hidden;
+  position: relative;
+}
+
+.slider {
+  display: flex;
+  animation: slide 20s linear infinite;
+  height: 110px;
+}
+
+.news {
+  width: 300px; /* Ajuste o tamanho coforme necessário */
+  flex-shrink: 0;
+  padding: 0px;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(100%);
+  }
+  
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.link-style {
+  font-size: 15px;
+  color: #15458d;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.link-style:hover {
+  color: #23a6f0; /* Mude para a cor que desejar quando o mouse estiver sobre o link */
+}
+.classDesc{
+  font-size: 14px;
+  color: #000000;
+  margin-top: 2px;
+  margin-bottom: -2px;
+}
+.classImageNews{
+  width: 50px;
+  height: 50px;
+  margin-bottom: -5%;
+
+}
